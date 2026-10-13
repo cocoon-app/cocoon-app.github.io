@@ -3,664 +3,716 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cocoon — From idea to App Store, no code</title>
-<meta name="description" content="Cocoon is a Mac app that builds real websites, iPhone and Android apps from a conversation — and ships them to the web, the App Store and Google Play.">
-<meta name="theme-color" content="#0E0E12">
-<meta property="og:title" content="Cocoon — From idea to App Store, no code">
-<meta property="og:description" content="Describe your app. Watch it come to life. Ship it to the web, the App Store and Google Play.">
-<meta property="og:image" content="https://cocoon-app.github.io/assets/icon-512.png">
+<title>Cocoon (beta): your idea goes in, an app comes out</title>
+<meta name="description" content="Cocoon is a Mac app for everyday people. Describe an app in plain words and Cocoon builds real websites and native iPhone and Android apps, runs them on your Mac and ships them.">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#0E0E12" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F6F3EE" media="(prefers-color-scheme: light)">
+<meta property="og:title" content="Cocoon (beta): your idea goes in, an app comes out">
+<meta property="og:description" content="Build real websites and native iPhone and Android apps by describing them. No coding, no setup, all on your Mac.">
+<meta property="og:image" content="https://cocoon-app.github.io/assets/screens/home.jpg">
 <meta property="og:type" content="website">
 <link rel="icon" type="image/png" href="assets/favicon-64.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="preload" href="assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/screens/home.jpg" as="image">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
 <style>
+@font-face { font-family: "Geist"; font-style: normal; font-weight: 300 900; font-display: swap; src: url(assets/fonts/geist-latin.woff2) format("woff2"); }
+@font-face { font-family: "Geist Mono"; font-style: normal; font-weight: 400 600; font-display: swap; src: url(assets/fonts/geist-mono-latin.woff2) format("woff2"); }
+
+/*
+  Design read: premium product landing for everyday makers (not developers), cinematic and
+  Apple-adjacent, in the brand's own violet (brand override of the "no AI purple" rule).
+  Native CSS + GSAP ScrollTrigger. Dials: VARIANCE 8 / MOTION 8 / DENSITY 3.
+  Shape lock: interactive = full pill, surfaces = 20px, screenshots = 14px.
+  One accent (brand violet). Theme follows the system. Every product image is a real Cocoon screen.
+*/
 :root {
-  --ink: #0E0E12;
-  --ink-2: #15151B;
-  --ink-3: #1D1D25;
-  --line: rgba(255,255,255,.08);
-  --line-2: rgba(255,255,255,.14);
-  --text: #F4F2FA;
-  --muted: #A3A0B5;
-  --faint: #6E6B80;
-  --violet: #6A4CFF;
-  --violet-top: #7457FF;
-  --violet-bottom: #4A2BD9;
-  --violet-soft: rgba(106,76,255,.16);
-  --silk: #F6F3EE;
-  --green: #3DDC84;
-  --radius: 22px;
-  --max: 1180px;
+  --bg: #0E0E12; --bg-2: #15151B; --bg-3: #1C1C24;
+  --fg: #F2F0F7; --fg-2: #ABA8BA; --fg-3: #77748A;
+  --line: rgba(242,240,247,.09); --line-2: rgba(242,240,247,.16);
+  --accent: #7457FF; --accent-deep: #4A2BD9; --accent-soft: rgba(116,87,255,.14); --accent-text: #A794FF;
+  --thread: #8F78FF;
+  --logo: #D9D5E6;
+  --shadow: 0 50px 120px -30px rgba(8,4,26,.8);
+  --r-surface: 20px; --r-media: 14px; --max: 1320px;
+  --ease: cubic-bezier(.16,1,.3,1);
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #F6F3EE; --bg-2: #EEEAE3; --bg-3: #E5E0D7;
+    --fg: #121019; --fg-2: #4E4A5C; --fg-3: #6E697D;
+    --line: rgba(18,16,25,.09); --line-2: rgba(18,16,25,.16);
+    --accent: #5B3DF0; --accent-soft: rgba(91,61,240,.1); --accent-text: #4A2BD9;
+    --thread: #6A4CFF; --logo: #2A2735;
+    --shadow: 0 50px 110px -35px rgba(40,24,90,.4);
+  }
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body {
-  margin: 0;
-  background: var(--ink);
-  color: var(--text);
-  font: 400 17px/1.6 Inter, -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
-}
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 400 17px/1.6 "Geist", -apple-system, BlinkMacSystemFont, system-ui, sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 a { color: inherit; text-decoration: none; }
-img, svg { display: block; }
-.wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
-.mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; }
+img, svg { display: block; max-width: 100%; }
+.wrap { width: 100%; max-width: var(--max); margin: 0 auto; padding: 0 28px; }
+h2 { margin: 0; font-weight: 700; letter-spacing: -.05em; line-height: 1.02; font-size: clamp(40px, 5.2vw, 76px); }
+.lead { color: var(--fg-2); font-size: 19px; line-height: 1.55; max-width: 44ch; margin: 22px 0 0; }
+.eyebrow { font: 600 13px/1 "Geist Mono", ui-monospace, monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--accent-text); margin: 0 0 20px; }
+.ph { font-size: 22px; }
 
-/* ---------- Background ---------- */
-.sky {
-  position: absolute; inset: 0 0 auto 0; height: 1400px; pointer-events: none; z-index: 0; overflow: hidden;
-}
-.sky::before {
-  content: ""; position: absolute; left: 50%; top: -420px; width: 1400px; height: 1100px; transform: translateX(-50%);
-  background: radial-gradient(closest-side, rgba(106,76,255,.55), rgba(74,43,217,.18) 55%, transparent 75%);
-  filter: blur(20px);
-}
-.sky::after {
-  content: ""; position: absolute; inset: 0;
-  background-image: radial-gradient(rgba(255,255,255,.07) 1px, transparent 1px);
-  background-size: 28px 28px;
-  mask-image: radial-gradient(ellipse 70% 55% at 50% 30%, #000 30%, transparent 75%);
-  -webkit-mask-image: radial-gradient(ellipse 70% 55% at 50% 30%, #000 30%, transparent 75%);
-}
+/* Grain: one fixed layer, never on scrolling content */
+body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 90; opacity: .045; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 
-/* ---------- Nav ---------- */
-nav.top {
-  position: sticky; top: 0; z-index: 50;
-  backdrop-filter: saturate(160%) blur(18px); -webkit-backdrop-filter: saturate(160%) blur(18px);
-  background: rgba(14,14,18,.62); border-bottom: 1px solid transparent; transition: border-color .3s;
-}
-nav.top.scrolled { border-bottom-color: var(--line); }
-nav.top .wrap { display: flex; align-items: center; height: 68px; gap: 28px; }
-.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 22px; letter-spacing: -.04em; }
-.brand svg { height: 30px; width: 14px; }
-nav.top .links { display: flex; gap: 26px; margin-left: auto; font-size: 15px; color: var(--muted); }
-nav.top .links a:hover { color: var(--text); }
-.btn {
-  display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 20px; border-radius: 999px;
-  font-weight: 600; font-size: 15px; border: 1px solid var(--line-2); transition: transform .2s, background .2s, box-shadow .2s;
-  white-space: nowrap;
-}
-.btn:hover { transform: translateY(-1px); }
-.btn.primary {
-  background: linear-gradient(180deg, var(--violet-top), var(--violet-bottom)); border-color: transparent;
-  box-shadow: 0 8px 30px rgba(106,76,255,.45), inset 0 1px 0 rgba(255,255,255,.25);
-}
-.btn.primary:hover { box-shadow: 0 12px 40px rgba(106,76,255,.6), inset 0 1px 0 rgba(255,255,255,.25); }
-.btn.ghost { background: rgba(255,255,255,.04); }
-.btn.ghost:hover { background: rgba(255,255,255,.08); }
-.btn.lg { height: 54px; padding: 0 28px; font-size: 16px; }
+/* Real logos (Simple Icons), tinted to the theme through a mask */
+.logo { display: inline-block; width: var(--s, 28px); height: var(--s, 28px); background: var(--logo); -webkit-mask: var(--u) center / contain no-repeat; mask: var(--u) center / contain no-repeat; flex: none; }
+.l-github { --u: url(assets/logos/github.svg); } .l-vercel { --u: url(assets/logos/vercel.svg); } .l-fly { --u: url(assets/logos/flydotio.svg); }
+.l-appstore { --u: url(assets/logos/appstore.svg); } .l-googleplay { --u: url(assets/logos/googleplay.svg); } .l-apple { --u: url(assets/logos/apple.svg); }
+.l-android { --u: url(assets/logos/android.svg); } .l-swift { --u: url(assets/logos/swift.svg); } .l-kotlin { --u: url(assets/logos/kotlin.svg); }
+.l-openrouter { --u: url(assets/logos/openrouter.svg); } .l-claude { --u: url(assets/logos/claude.svg); } .l-anthropic { --u: url(assets/logos/anthropic.svg); }
+.l-react { --u: url(assets/logos/react.svg); } .l-next { --u: url(assets/logos/nextdotjs.svg); } .l-rails { --u: url(assets/logos/rubyonrails.svg); }
+.l-django { --u: url(assets/logos/django.svg); } .l-fastapi { --u: url(assets/logos/fastapi.svg); } .l-laravel { --u: url(assets/logos/laravel.svg); }
+.l-postgres { --u: url(assets/logos/postgresql.svg); } .l-svelte { --u: url(assets/logos/svelte.svg); } .l-vue { --u: url(assets/logos/vuedotjs.svg); }
+.l-go { --u: url(assets/logos/go.svg); } .l-google { --u: url(assets/logos/google.svg); } .l-compose { --u: url(assets/logos/jetpackcompose.svg); } .l-xcode { --u: url(assets/logos/xcode.svg); }
 
-/* ---------- Hero ---------- */
-header.hero { position: relative; z-index: 1; padding: 84px 0 40px; text-align: center; }
-.hero-mark { width: 92px; margin: 0 auto 26px; filter: drop-shadow(0 18px 40px rgba(106,76,255,.65)); animation: float 6s ease-in-out infinite; }
-@keyframes float { 50% { transform: translateY(-10px); } }
-.eyebrow {
-  display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px 6px 8px; border-radius: 999px;
-  background: rgba(255,255,255,.05); border: 1px solid var(--line-2); font-size: 13px; color: var(--muted); margin-bottom: 26px;
-}
-.eyebrow b { background: var(--violet); color: #fff; border-radius: 999px; padding: 2px 9px; font-size: 11px; letter-spacing: .04em; }
-h1 {
-  font-size: clamp(42px, 7.4vw, 92px); line-height: 1; letter-spacing: -.05em; font-weight: 800; margin: 0 auto;
-}
-h1 .glow {
-  background: linear-gradient(100deg, #fff 10%, #C9BEFF 40%, #8E77FF 65%, #fff 95%);
-  background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
-  animation: sheen 8s linear infinite;
-}
-@keyframes sheen { to { background-position: -200% 0; } }
-.lede { font-size: clamp(18px, 2.2vw, 22px); color: var(--muted); max-width: 720px; margin: 26px auto 38px; line-height: 1.5; }
-.cta-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-.req { margin-top: 18px; font-size: 13px; color: var(--faint); }
+/* Buttons (pill) */
+.btn { --pad: 22px; display: inline-flex; align-items: center; gap: 10px; height: 50px; padding: 0 var(--pad); border-radius: 999px; font-weight: 600; font-size: 15.5px; letter-spacing: -.01em; white-space: nowrap; border: 1px solid transparent; transition: transform .4s var(--ease), background-color .3s var(--ease); }
+.btn:active { transform: translateY(1px) scale(.98); }
+.btn-primary { background: var(--accent); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 10px 30px -10px rgba(91,61,240,.7); }
+.btn-primary:hover { background: var(--accent-deep); }
+.btn-primary .ph { font-size: 18px; transition: transform .4s var(--ease); }
+.btn-primary:hover .ph { transform: translateX(3px); }
+.btn-quiet { border-color: var(--line-2); }
+.btn-quiet:hover { background: var(--bg-2); }
+.beta { display: inline-flex; align-items: center; height: 22px; padding: 0 9px; border-radius: 999px; font: 700 11px/1 "Geist Mono", monospace; letter-spacing: .1em; color: var(--accent-text); background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent); }
 
-/* ---------- Product stage ---------- */
-.stage { position: relative; z-index: 1; margin: 70px auto 0; max-width: 1120px; padding: 0 24px; text-align: left; }
-.window {
-  position: relative; border-radius: 18px; background: linear-gradient(180deg, #1B1B22, #121218);
-  border: 1px solid var(--line-2); box-shadow: 0 50px 120px rgba(0,0,0,.6), 0 0 0 1px rgba(0,0,0,.4), 0 0 120px rgba(106,76,255,.18);
-  overflow: hidden;
-}
-.titlebar { display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.02); }
-.dot { width: 12px; height: 12px; border-radius: 50%; }
-.dot.r { background: #FF5F57; } .dot.y { background: #FEBC2E; } .dot.g { background: #28C840; }
-.titlebar .seg { margin: 0 auto; display: flex; gap: 2px; padding: 3px; border-radius: 9px; background: rgba(255,255,255,.05); font-size: 12px; color: var(--muted); }
-.titlebar .seg span { padding: 4px 12px; border-radius: 7px; }
-.titlebar .seg span.on { background: rgba(255,255,255,.1); color: var(--text); }
-.titlebar .pill { font-size: 12px; color: var(--green); display: flex; align-items: center; gap: 6px; }
-.app { display: grid; grid-template-columns: 1fr 360px; min-height: 600px; }
-.canvas { position: relative; padding: 34px; display: grid; place-items: center; background: radial-gradient(ellipse at 50% 0%, rgba(106,76,255,.12), transparent 60%); }
-.chat { border-left: 1px solid var(--line); padding: 20px; display: flex; flex-direction: column; gap: 12px; background: rgba(0,0,0,.18); }
-.bubble { padding: 11px 14px; border-radius: 14px; font-size: 14px; line-height: 1.45; max-width: 92%; opacity: 0; transform: translateY(8px); transition: opacity .5s, transform .5s; }
-.bubble.show { opacity: 1; transform: none; }
-.bubble.me { align-self: flex-end; background: linear-gradient(180deg, var(--violet-top), var(--violet-bottom)); }
-.bubble.ai { background: rgba(255,255,255,.06); border: 1px solid var(--line); color: #DCD8EA; }
-.bubble.ai .step { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); margin-top: 6px; }
-.bubble.ai .step i { width: 14px; height: 14px; border-radius: 50%; background: var(--green); display: grid; place-items: center; font-style: normal; font-size: 9px; color: #0b2; }
-.composer { margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line-2); background: rgba(255,255,255,.03); font-size: 14px; color: var(--faint); min-height: 46px; }
-.composer .typed { color: var(--text); }
-.caret { display: inline-block; width: 2px; height: 1.1em; background: var(--violet-top); vertical-align: -3px; animation: blink 1s steps(1) infinite; }
-@keyframes blink { 50% { opacity: 0; } }
-.composer .send { margin-left: auto; width: 28px; height: 28px; border-radius: 50%; background: var(--violet); display: grid; place-items: center; flex: none; }
+/* Nav */
+.nav { position: fixed; inset: 0 0 auto; z-index: 50; border-bottom: 1px solid transparent; transition: background-color .4s, border-color .4s; }
+.nav.solid { background: color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter: blur(16px) saturate(160%); -webkit-backdrop-filter: blur(16px) saturate(160%); border-bottom-color: var(--line); }
+.nav .wrap { display: flex; align-items: center; height: 68px; gap: 30px; }
+.brand { display: inline-flex; align-items: center; gap: 9px; font-weight: 800; font-size: 23px; letter-spacing: -.055em; }
+.brand svg { width: 13px; height: 29px; color: var(--accent); }
+.brand .beta { margin-left: 4px; }
+.nav-links { display: flex; gap: 26px; margin-left: auto; font-size: 15px; color: var(--fg-2); }
+.nav-links a:hover { color: var(--fg); }
+.nav .btn { height: 42px; --pad: 18px; font-size: 14.5px; }
 
-/* The app being built, inside the canvas */
-.phone {
-  width: 290px; height: 560px; border-radius: 46px; padding: 12px; background: #050507;
-  box-shadow: 0 0 0 2px #2A2A33, 0 30px 80px rgba(0,0,0,.6), 0 0 60px rgba(106,76,255,.25);
-  position: relative;
-}
-.phone::before { content: ""; position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 76px; height: 22px; border-radius: 12px; background: #000; z-index: 2; }
-.screen { width: 100%; height: 100%; border-radius: 32px; overflow: hidden; background: var(--silk); color: #1A1726; position: relative; }
-.screen .bar { height: 50px; }
-.screen .scr-head { padding: 6px 18px 12px; }
-.screen .scr-head small { color: #7A7590; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
-.screen .scr-head h4 { margin: 2px 0 0; font-size: 22px; letter-spacing: -.03em; transition: color .6s; }
-.slots { padding: 0 14px; display: grid; gap: 9px; }
-.slot { display: flex; align-items: center; gap: 10px; padding: 11px 12px; border-radius: 14px; background: #fff; box-shadow: 0 1px 0 rgba(0,0,0,.04), 0 6px 18px rgba(30,20,60,.06); font-size: 12.5px; opacity: 0; transform: translateY(10px); transition: all .5s; }
-.slot.show { opacity: 1; transform: none; }
-.slot .time { font-weight: 700; width: 46px; }
-.slot .what { flex: 1; color: #5B5670; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.slot .book { font-size: 11px; font-weight: 700; color: #fff; background: var(--accent, var(--violet)); padding: 5px 10px; border-radius: 999px; transition: background .6s; }
-.screen .tabbar { position: absolute; bottom: 0; left: 0; right: 0; height: 58px; background: rgba(255,255,255,.85); border-top: 1px solid rgba(0,0,0,.06); display: flex; justify-content: space-around; align-items: center; }
-.screen .tabbar span { width: 22px; height: 22px; border-radius: 7px; background: #E2DEEA; }
-.screen .tabbar span.on { background: var(--accent, var(--violet)); transition: background .6s; }
-.float-card {
-  position: absolute; border-radius: 16px; padding: 12px 14px; font-size: 13px; background: rgba(28,28,36,.86);
-  border: 1px solid var(--line-2); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 20px 50px rgba(0,0,0,.45);
-  display: flex; align-items: center; gap: 10px; animation: bob 7s ease-in-out infinite;
-}
-.float-card .ic { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; flex: none; }
-.float-card small { display: block; color: var(--muted); font-size: 11.5px; }
-.fc-1 { left: 22px; top: 36px; }
-.fc-2 { right: 24px; top: 150px; animation-delay: -2s; }
-.fc-3 { right: 22px; bottom: 40px; animation-delay: -4s; }
-@keyframes bob { 50% { transform: translateY(-8px); } }
+/* 1. Hero metamorphosis (pinned) */
+.meta { position: relative; height: 100dvh; min-height: 700px; overflow: hidden; }
+.meta-bg { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(55% 65% at 74% 38%, var(--accent-soft), transparent 70%); }
+.hero-grid { position: relative; z-index: 2; height: 100%; display: grid; grid-template-columns: repeat(12, 1fr); align-items: center; padding-top: 68px; }
+.hero-copy { grid-column: 1 / span 7; }
+.hero-copy h1 { margin: 0; font-weight: 700; letter-spacing: -.055em; line-height: 1.02; font-size: clamp(46px, 6.2vw, 90px); }
+.hero-copy h1 .line { display: block; overflow: hidden; padding-bottom: .06em; }
+.hero-copy h1 .line > span { display: inline-block; }
+.hero-copy h1 em { font-style: normal; color: var(--accent-text); }
+.hero-copy p { font-size: clamp(18px, 1.45vw, 21px); color: var(--fg-2); max-width: 36ch; margin: 28px 0 38px; line-height: 1.5; }
+.hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+.rig { position: absolute; z-index: 3; top: 0; left: 72%; width: 0; height: 100%; pointer-events: none; }
+.rig-move, .rig-swing { position: absolute; top: 0; left: 0; transform-origin: 0 0; }
+.rig-swing { will-change: transform; }
+.thread { position: absolute; left: -1.5px; top: 0; width: 3px; border-radius: 3px; background: linear-gradient(to bottom, transparent, var(--thread) 20%, var(--thread)); }
+.pod { position: absolute; left: 0; transform: translateX(-50%); filter: drop-shadow(0 30px 60px rgba(74,43,217,.45)); }
+.pod svg { width: 100%; height: auto; overflow: visible; }
+.reveal-app { position: absolute; z-index: 4; left: 50%; top: 50%; width: min(1180px, 88vw, calc((100dvh - 230px) * 1.5936)); aspect-ratio: 2000 / 1255; transform: translate(-50%, -54%); --r: 0%; --cx: 72%; --cy: 40%; clip-path: circle(var(--r) at var(--cx) var(--cy)); -webkit-clip-path: circle(var(--r) at var(--cx) var(--cy)); pointer-events: none; }
+.reveal-app img { width: 100%; height: auto; border-radius: var(--r-media); box-shadow: var(--shadow); }
+.captions { position: absolute; z-index: 5; left: 0; right: 0; bottom: 5.5vh; text-align: center; pointer-events: none; height: 1.4em; font-size: clamp(20px, 2.1vw, 30px); font-weight: 600; letter-spacing: -.03em; }
+.captions span { position: absolute; left: 0; right: 0; opacity: 0; }
 
-/* ---------- Strip ---------- */
-.strip { position: relative; z-index: 1; padding: 64px 0 20px; text-align: center; }
-.strip p { color: var(--faint); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; margin: 0 0 18px; }
-.strip .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 12px; }
-.chip { padding: 8px 15px; border-radius: 999px; border: 1px solid var(--line); background: rgba(255,255,255,.03); font-size: 14px; color: #CFCBE0; display: inline-flex; gap: 8px; align-items: center; }
-.chip svg { width: 16px; height: 16px; opacity: .85; }
+/* 2. Logo wall (logos only) */
+.wall { padding: 70px 0 40px; }
+.wall .row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 34px 40px; }
+.wall .logo { --s: 34px; opacity: .78; transition: opacity .3s; }
+.wall .logo:hover { opacity: 1; }
 
-/* ---------- Sections ---------- */
-section { position: relative; z-index: 1; padding: 120px 0; }
-.kicker { color: #9D8BFF; font-weight: 700; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; }
-h2 { font-size: clamp(34px, 5vw, 60px); line-height: 1.02; letter-spacing: -.045em; font-weight: 800; margin: 14px 0 18px; }
-.sub { color: var(--muted); font-size: 19px; max-width: 640px; margin: 0; }
-.center { text-align: center; }
-.center .sub { margin: 0 auto; }
+/* 3. Guided (sticky stack of real wizard screens) */
+.guided { position: relative; }
+.guided-pin { height: 100dvh; min-height: 700px; display: grid; grid-template-columns: repeat(12, 1fr); align-items: center; gap: 28px; }
+.guided .copy { grid-column: 1 / span 5; }
+.steps-list { list-style: none; margin: 34px 0 0; padding: 0; display: grid; gap: 4px; }
+.steps-list li { display: flex; gap: 14px; align-items: baseline; padding: 12px 0; color: var(--fg-3); transition: color .5s var(--ease); font-size: 17px; }
+.steps-list li b { color: inherit; font-weight: 600; min-width: 92px; }
+.steps-list li.on { color: var(--fg); }
+.steps-list li.on b { color: var(--accent-text); }
+.stack { grid-column: 6 / span 7; position: relative; aspect-ratio: 1600 / 1152; overflow: hidden; border-radius: var(--r-media); }
+.stack img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: var(--r-media); box-shadow: var(--shadow); border: 1px solid var(--line); will-change: transform; }
 
-/* How it works */
-.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 60px; counter-reset: s; }
-.step-card { padding: 28px; border-radius: var(--radius); background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.015)); border: 1px solid var(--line); position: relative; overflow: hidden; }
-.step-card::before { counter-increment: s; content: counter(s); position: absolute; right: 22px; bottom: -18px; font-size: 120px; font-weight: 900; letter-spacing: -.06em; color: rgba(255,255,255,.035); line-height: 1; }
-.step-card h3 { margin: 18px 0 8px; font-size: 22px; letter-spacing: -.02em; }
-.step-card p { margin: 0; color: var(--muted); font-size: 15.5px; }
-.vis { height: 150px; border-radius: 16px; background: rgba(0,0,0,.25); border: 1px solid var(--line); display: grid; place-items: center; overflow: hidden; position: relative; }
-.idea { font-size: 14px; padding: 12px 16px; border-radius: 14px; background: rgba(255,255,255,.06); border: 1px solid var(--line-2); max-width: 86%; }
-.progress { display: flex; align-items: center; gap: 0; }
-.progress .n { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.07); font-size: 12px; color: var(--muted); }
-.progress .n.done { background: var(--violet); color: #fff; }
-.progress .n.now { box-shadow: 0 0 0 2px var(--violet-top), 0 0 22px rgba(106,76,255,.8); background: #2A2440; color: #fff; }
-.progress .ln { width: 26px; height: 2px; background: rgba(255,255,255,.1); }
-.progress .ln.done { background: var(--violet); }
-.ship { display: flex; gap: 10px; }
-.ship span { padding: 10px 14px; border-radius: 12px; font-size: 13px; font-weight: 600; background: rgba(255,255,255,.07); border: 1px solid var(--line-2); }
-.ship span.live { background: rgba(61,220,132,.12); border-color: rgba(61,220,132,.35); color: var(--green); }
+/* 4. AI providers (split with real screen) */
+.ai { padding: 150px 0 120px; }
+.ai-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 28px; align-items: center; }
+.ai .shot { grid-column: 1 / span 7; }
+.ai .copy { grid-column: 9 / span 4; }
+.shot img { width: 100%; height: auto; border-radius: var(--r-media); box-shadow: var(--shadow); border: 1px solid var(--line); }
+.providers { display: flex; gap: 22px; align-items: center; margin-top: 30px; flex-wrap: wrap; }
+.providers .logo { --s: 30px; }
+.providers span.word { font-weight: 700; letter-spacing: -.03em; font-size: 19px; color: var(--logo); }
 
-/* Bento */
-.bento { display: grid; grid-template-columns: repeat(6, 1fr); gap: 18px; margin-top: 60px; }
-.tile { grid-column: span 2; padding: 28px; border-radius: var(--radius); background: var(--ink-2); border: 1px solid var(--line); position: relative; overflow: hidden; min-height: 250px; display: flex; flex-direction: column; }
-.tile.wide { grid-column: span 3; }
-.tile.xwide { grid-column: span 4; }
-.tile h3 { font-size: 21px; letter-spacing: -.02em; margin: auto 0 6px; }
-.tile p { margin: 0; color: var(--muted); font-size: 15px; }
-.tile .icon { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; background: var(--violet-soft); color: #B9AAFF; margin-bottom: 20px; }
-.tile .icon svg { width: 22px; height: 22px; }
-.tile.glow::after { content: ""; position: absolute; right: -80px; top: -80px; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(closest-side, rgba(106,76,255,.35), transparent); }
-.stacks { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 22px; }
-.stacks span { font-size: 12.5px; padding: 6px 11px; border-radius: 9px; background: rgba(255,255,255,.05); border: 1px solid var(--line); color: #D6D2E6; }
-.say { display: grid; gap: 8px; margin-bottom: 22px; }
-.say span { justify-self: start; font-size: 14px; padding: 9px 13px; border-radius: 13px 13px 13px 4px; background: rgba(255,255,255,.06); border: 1px solid var(--line); }
-.say span:nth-child(2) { justify-self: end; border-radius: 13px 13px 4px 13px; background: linear-gradient(180deg, var(--violet-top), var(--violet-bottom)); border: 0; }
-.ai-row { display: flex; gap: 10px; margin-bottom: 22px; flex-wrap: wrap; }
-.ai-row span { font-size: 13px; padding: 8px 12px; border-radius: 10px; background: rgba(255,255,255,.05); border: 1px solid var(--line); }
+/* 5. Native bento (5 cells) */
+.native { padding: 40px 0 150px; }
+.native-head { max-width: 920px; margin-bottom: 56px; }
+.bento { display: grid; grid-template-columns: repeat(6, 1fr); grid-auto-rows: minmax(250px, auto); gap: 18px; }
+.cell { border-radius: var(--r-surface); background: var(--bg-2); border: 1px solid var(--line); padding: 32px; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+.cell h3 { margin: auto 0 8px; font-size: 25px; letter-spacing: -.035em; line-height: 1.1; }
+.cell p { margin: 0; color: var(--fg-2); font-size: 15.5px; max-width: 44ch; }
+.cell .logos { display: flex; gap: 16px; align-items: center; }
+.cell .logos .logo { --s: 40px; }
+.cell.ios { grid-column: span 3; grid-row: span 2; background: radial-gradient(80% 70% at 80% 0%, var(--accent-soft), transparent 70%), var(--bg-2); }
+.cell.android { grid-column: span 3; }
+.cell.web { grid-column: span 3; }
+.cell.ask { grid-column: span 4; }
+.cell.ask img { border-radius: 12px; border: 1px solid var(--line); margin-bottom: 34px; max-width: 560px; }
+.cell.mac { grid-column: span 2; background: linear-gradient(160deg, var(--accent-deep), #29177A); border-color: transparent; color: #fff; }
+.cell.mac p { color: rgba(255,255,255,.8); }
+.phone-ghost { margin: 6px 0 40px; display: flex; gap: 18px; }
+.phone-ghost .logo { --s: 64px; }
+.big-word { font-size: clamp(64px, 7vw, 110px); font-weight: 800; letter-spacing: -.06em; line-height: .9; color: var(--accent-text); margin: 4px 0 24px; }
 
-/* App Store journey */
-.journey { display: grid; grid-template-columns: 1.05fr 1fr; gap: 60px; align-items: center; }
-.list { border-radius: var(--radius); background: var(--ink-2); border: 1px solid var(--line); padding: 14px; box-shadow: 0 40px 100px rgba(0,0,0,.4); }
-.li { display: flex; align-items: center; gap: 14px; padding: 11px 12px; border-radius: 14px; transition: background .4s; }
-.li .c { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; flex: none; background: rgba(255,255,255,.06); color: var(--faint); font-size: 13px; font-weight: 700; transition: all .4s; }
-.li.done .c { background: var(--green); color: #06280f; }
-.li.now { background: rgba(106,76,255,.12); box-shadow: inset 0 0 0 1px rgba(106,76,255,.45); }
-.li.now .c { background: linear-gradient(180deg, var(--violet-top), var(--violet-bottom)); color: #fff; }
-.li b { font-size: 15px; font-weight: 600; }
-.li small { display: block; color: var(--faint); font-size: 12.5px; }
-.li .tag { margin-left: auto; font-size: 11.5px; color: var(--muted); white-space: nowrap; }
-.points { display: grid; gap: 22px; margin-top: 34px; }
-.point { display: flex; gap: 14px; }
-.point .ic { width: 38px; height: 38px; border-radius: 11px; background: var(--violet-soft); color: #B9AAFF; display: grid; place-items: center; flex: none; }
-.point .ic svg { width: 19px; height: 19px; }
-.point b { display: block; font-size: 16.5px; }
-.point span { color: var(--muted); font-size: 15px; }
+/* 6. Shipping (horizontal pan) */
+.ship-head { padding: 150px 0 50px; }
+.pan { overflow: hidden; }
+.track { display: flex; gap: 24px; width: max-content; padding: 0 28px 130px max(28px, calc((100vw - var(--max)) / 2 + 28px)); }
+.panel { flex: none; width: min(600px, 84vw); min-height: 600px; border-radius: var(--r-surface); padding: 34px; display: flex; flex-direction: column; background: var(--bg-2); border: 1px solid var(--line); position: relative; overflow: hidden; }
+.panel .n { font: 600 13px/1 "Geist Mono", monospace; color: var(--fg-3); margin-bottom: 22px; }
+.panel h3 { margin: auto 0 10px; font-size: 31px; letter-spacing: -.04em; line-height: 1.05; }
+.panel p { margin: 0; color: var(--fg-2); font-size: 16.5px; max-width: 42ch; }
+.panel .shot img { border-radius: 12px; }
+.panel .logos { display: flex; gap: 14px; align-items: center; margin-bottom: 26px; }
+.panel .logos .logo { --s: 36px; }
+.panel.store { background: linear-gradient(160deg, var(--accent-deep), #29177A); border-color: transparent; color: #fff; }
+.panel.store p, .panel.store .n { color: rgba(255,255,255,.75); }
+.panel.store .logo { background: #fff; }
+.checks { display: grid; gap: 2px; padding: 10px; border-radius: 16px; background: rgba(10,6,30,.35); border: 1px solid rgba(255,255,255,.14); }
+.checks div { display: flex; align-items: center; gap: 12px; padding: 9px 10px; font-size: 14.5px; font-weight: 600; border-radius: 10px; }
+.checks i { font-size: 19px; color: #7CE7AE; }
+.checks div.now { background: rgba(255,255,255,.1); }
+.checks div.now i { color: #fff; }
+.checks small { margin-left: auto; font-weight: 500; opacity: .6; font-size: 12px; white-space: nowrap; }
+.url { font: 500 16px/1 "Geist Mono", monospace; display: flex; align-items: center; gap: 10px; padding: 16px 18px; border-radius: 12px; background: var(--bg); border: 1px solid var(--line); }
+.url i { color: #3FCF8E; font-size: 18px; }
+.url small { margin-left: auto; font: 500 12px/1 "Geist", sans-serif; color: var(--fg-3); }
+.stacked { display: grid; gap: 10px; }
+.signin { display: flex; align-items: center; gap: 12px; height: 54px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--bg); font-weight: 600; font-size: 15.5px; }
+.signin .logo { --s: 20px; }
+.signin i.ph { font-size: 20px; }
 
-/* GitHub section */
-.gh { border-radius: 32px; padding: 70px; background: radial-gradient(ellipse at 100% 0%, rgba(106,76,255,.28), transparent 55%), linear-gradient(180deg, #17171E, #111116); border: 1px solid var(--line-2); display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; overflow: hidden; }
-.sync { display: grid; gap: 12px; }
-.sync-pill { display: inline-flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 999px; background: rgba(255,255,255,.06); border: 1px solid var(--line-2); font-size: 14.5px; font-weight: 600; justify-self: start; }
-.sync-pill .d { width: 9px; height: 9px; border-radius: 50%; }
-.timeline { margin-top: 10px; border-left: 2px solid var(--line-2); padding-left: 20px; display: grid; gap: 16px; }
-.timeline div { position: relative; font-size: 14.5px; }
-.timeline div::before { content: ""; position: absolute; left: -27px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--ink); border: 2px solid var(--violet-top); }
-.timeline small { display: block; color: var(--faint); font-size: 12.5px; }
+/* 7. Under the hood (zoom on the real architecture map) */
+.hood { padding: 40px 0 150px; }
+.hood-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 28px; align-items: end; margin-bottom: 50px; }
+.hood-grid .left { grid-column: 1 / span 7; }
+.hood-grid .right { grid-column: 9 / span 4; color: var(--fg-2); font-size: 17px; }
+.hood-grid .right ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+.hood-grid .right li { display: flex; gap: 12px; }
+.hood-grid .right i { color: var(--accent-text); margin-top: 2px; }
+.zoom { border-radius: var(--r-surface); overflow: hidden; border: 1px solid var(--line); box-shadow: var(--shadow); }
+.zoom img { width: 100%; height: auto; transform-origin: 50% 40%; will-change: transform; }
 
-/* FAQ */
-.faq { max-width: 820px; margin: 50px auto 0; }
-details { border-bottom: 1px solid var(--line); padding: 22px 4px; }
-summary { cursor: pointer; list-style: none; font-size: 18.5px; font-weight: 600; display: flex; justify-content: space-between; gap: 20px; }
+/* 8. GitHub */
+.gh { padding: 60px 0 150px; }
+.gh-card { border-radius: 28px; padding: 64px; background: radial-gradient(70% 90% at 100% 0%, var(--accent-soft), transparent 60%), var(--bg-2); border: 1px solid var(--line); display: grid; grid-template-columns: repeat(12, 1fr); gap: 28px; align-items: center; }
+.gh-card .copy { grid-column: 1 / span 5; }
+.gh-card .copy .logo { --s: 52px; background: var(--fg); margin-bottom: 30px; }
+.gh-card .shot { grid-column: 7 / span 6; }
+.sync-states { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+.sync-states span { display: inline-flex; align-items: center; gap: 8px; padding: 9px 15px; border-radius: 999px; border: 1px solid var(--line-2); font-size: 14.5px; font-weight: 500; transition: background-color .4s, border-color .4s, color .4s; }
+.sync-states span.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* 9. Marquee (the one per page): stacks with their logos */
+.marquee { padding: 64px 0 80px; overflow: hidden; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.marquee .intro { margin: 0 0 34px; color: var(--fg-2); font-size: 19px; }
+.marquee .row { display: flex; width: max-content; gap: 64px; align-items: center; will-change: transform; }
+.marquee .item { display: inline-flex; align-items: center; gap: 18px; font-size: clamp(36px, 4.6vw, 68px); font-weight: 700; letter-spacing: -.05em; line-height: 1; }
+.marquee .item .logo { --s: .9em; }
+
+/* 10. FAQ */
+.faq { padding: 140px 0 150px; }
+.faq-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 28px; }
+.faq-grid .left { grid-column: 1 / span 4; }
+.faq-grid .left h2 { position: sticky; top: 130px; }
+.faq-grid .right { grid-column: 6 / span 7; }
+details { border-bottom: 1px solid var(--line); }
+details:first-child { border-top: 1px solid var(--line); }
+summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 26px 2px; font-size: 20px; font-weight: 600; letter-spacing: -.02em; }
 summary::-webkit-details-marker { display: none; }
-summary::after { content: "+"; color: var(--violet-top); font-size: 24px; line-height: 1; transition: transform .3s; }
-details[open] summary::after { transform: rotate(45deg); }
-details p { color: var(--muted); margin: 12px 0 0; font-size: 16px; }
+summary i.ph { transition: transform .5s var(--ease); color: var(--accent-text); flex: none; }
+details[open] summary i.ph { transform: rotate(45deg); }
+details p { margin: 0 0 26px; color: var(--fg-2); font-size: 17px; max-width: 60ch; }
 
-/* Final CTA */
-.final { text-align: center; padding: 140px 0 120px; overflow: hidden; }
-.final .big-mark { width: 140px; margin: 0 auto 34px; filter: drop-shadow(0 30px 70px rgba(106,76,255,.7)); }
-.final::before { content: ""; position: absolute; left: 50%; bottom: -300px; width: 1200px; height: 700px; transform: translateX(-50%); background: radial-gradient(closest-side, rgba(106,76,255,.4), transparent); pointer-events: none; }
+/* 11. Finale */
+.finale { position: relative; padding: 110px 0 160px; text-align: center; overflow: hidden; }
+.finale h2 { max-width: 15ch; margin: 0 auto; }
+.finale p { color: var(--fg-2); font-size: 19px; margin: 24px auto 40px; max-width: 42ch; }
+.emerge { position: relative; width: 120px; height: 260px; margin: 0 auto 40px; }
+.emerge .shell { position: absolute; inset: 0; color: var(--accent); }
+.emerge .fly { position: absolute; left: 50%; top: 58%; width: 120px; transform: translate(-50%, -50%); opacity: 0; color: var(--accent-text); }
 
-footer { position: relative; z-index: 1; border-top: 1px solid var(--line); padding: 34px 0 48px; color: var(--faint); font-size: 14px; }
-footer .wrap { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
-footer .brand { font-size: 18px; color: var(--text); }
-footer .brand svg { height: 22px; width: 10px; }
+footer { border-top: 1px solid var(--line); padding: 34px 0 46px; color: var(--fg-3); font-size: 14px; }
+footer .wrap { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+footer .brand { font-size: 19px; color: var(--fg); }
+footer .brand svg { width: 10px; height: 23px; }
 footer nav { margin-left: auto; display: flex; gap: 22px; }
-footer nav a:hover { color: var(--text); }
+footer nav a:hover { color: var(--fg); }
+footer .legal { width: 100%; font-size: 12.5px; opacity: .85; }
 
-/* Reveal on scroll */
-.reveal { opacity: 0; transform: translateY(26px); transition: opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1); }
-.reveal.in { opacity: 1; transform: none; }
+/* Entry + scroll reveals */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-copy h1 .line > span { transform: translateY(105%); animation: rise 1.1s var(--ease) forwards; animation-delay: calc(var(--i) * 110ms + 150ms); }
+  .hero-copy p, .hero-ctas { opacity: 0; transform: translateY(16px); animation: fade 1s var(--ease) forwards; }
+  .hero-copy p { animation-delay: 420ms; } .hero-ctas { animation-delay: 540ms; }
+  .fade-up { opacity: 0; transform: translateY(30px); transition: opacity 1s var(--ease), transform 1s var(--ease); transition-delay: calc(var(--d, 0) * 90ms); }
+  .fade-up.in { opacity: 1; transform: none; }
+}
+@keyframes rise { to { transform: none; } }
+@keyframes fade { to { opacity: 1; transform: none; } }
 
-@media (max-width: 960px) {
-  nav.top .links { display: none; }
-  .app { grid-template-columns: 1fr; }
-  .chat { border-left: 0; border-top: 1px solid var(--line); }
-  .float-card { display: none; }
-  .steps { grid-template-columns: 1fr; }
+/* Mobile (< 900px): single column, no pinning, swipeable shipping */
+@media (max-width: 900px) {
+  .nav-links { display: none; }
+  .meta { height: auto; min-height: 0; overflow: visible; }
+  .hero-grid { grid-template-columns: 1fr; padding-top: 110px; }
+  .hero-copy { grid-column: 1; }
+  .hero-copy h1 { font-size: clamp(34px, 10vw, 46px); }
+  .rig { position: relative; left: 0; height: 320px; width: 100%; }
+  .rig-move { left: 50%; }
+  .reveal-app { position: relative; left: 0; top: 0; transform: none; width: auto; margin: 10px 20px 0; clip-path: none; -webkit-clip-path: none; }
+  .captions { position: relative; bottom: auto; height: auto; margin: 26px 20px 0; display: grid; gap: 6px; font-size: 20px; }
+  .captions span { position: static; opacity: 1; }
+  .wall .row { justify-content: center; }
+  .guided-pin { height: auto; min-height: 0; grid-template-columns: 1fr; padding-top: 110px; padding-bottom: 40px; }
+  .guided .copy, .stack { grid-column: 1; }
+  .stack { aspect-ratio: auto; display: grid; gap: 16px; }
+  .stack img { position: static; height: auto; }
+  .ai { padding: 90px 0; }
+  .ai-grid, .hood-grid, .faq-grid { grid-template-columns: 1fr; }
+  .ai .shot, .ai .copy, .hood-grid .left, .hood-grid .right, .faq-grid .left, .faq-grid .right { grid-column: 1; }
   .bento { grid-template-columns: 1fr; }
-  .tile, .tile.wide, .tile.xwide { grid-column: auto; }
-  .journey, .gh { grid-template-columns: 1fr; }
-  .gh { padding: 36px 24px; }
-  section { padding: 84px 0; }
+  .cell.ios, .cell.android, .cell.web, .cell.ask, .cell.mac { grid-column: 1; grid-row: auto; }
+  .ship-head { padding: 100px 0 36px; }
+  .pan { overflow-x: auto; scroll-snap-type: x mandatory; }
+  .track { padding: 0 20px 80px; }
+  .panel { scroll-snap-align: center; min-height: 520px; padding: 26px; }
+  .gh-card { grid-template-columns: 1fr; padding: 32px 22px; }
+  .gh-card .copy, .gh-card .shot { grid-column: 1; }
+  .faq { padding: 90px 0; }
+  .faq-grid .left h2 { position: static; }
 }
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation: none !important; transition: none !important; }
-  .reveal, .bubble, .slot { opacity: 1; transform: none; }
+  .meta { height: auto; min-height: 0; overflow: visible; }
+  .reveal-app { position: relative; left: auto; top: auto; transform: none; margin: 40px auto 0; clip-path: none; -webkit-clip-path: none; }
+  .captions { position: relative; bottom: auto; height: auto; display: grid; gap: 6px; margin-top: 30px; }
+  .captions span { position: static; opacity: 1; }
+  .rig { display: none; }
+  .guided-pin { height: auto; }
+  .stack { aspect-ratio: auto; display: grid; gap: 16px; }
+  .stack img { position: static; height: auto; }
 }
 </style>
 </head>
 <body>
 
-<!-- The Cocoon mark: a cocoon on its silk thread, a butterfly in negative space. Geometry from docs/brand/cocoon-mark.svg. -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<!-- Brand geometry from docs/brand/cocoon-mark.svg. Separate wing masks so the hero and finale animate their own wings. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
-    <mask id="wings" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024">
-      <rect x="0" y="0" width="1024" height="1024" fill="white"/>
-      <g fill="black" transform="translate(512 652) scale(.8) translate(-512 -615)">
-        <g class="wingset">
-          <path d="M526 600 C 530 520 590 440 672 430 C 702 428 710 456 698 488 C 678 548 610 596 526 628 Z"/>
-          <path d="M526 650 C 586 652 640 686 638 738 C 636 788 590 800 562 772 C 540 750 530 706 526 666 Z"/>
-          <g transform="translate(1024 0) scale(-1 1)">
-            <path d="M526 600 C 530 520 590 440 672 430 C 702 428 710 456 698 488 C 678 548 610 596 526 628 Z"/>
-            <path d="M526 650 C 586 652 640 686 638 738 C 636 788 590 800 562 772 C 540 750 530 706 526 666 Z"/>
-          </g>
-        </g>
-      </g>
-    </mask>
-    <linearGradient id="vg" gradientUnits="userSpaceOnUse" x1="0" y1="86" x2="0" y2="886">
-      <stop offset="0" stop-color="#8A72FF"/><stop offset="1" stop-color="#4A2BD9"/>
-    </linearGradient>
-    <symbol id="mark" viewBox="320 60 384 840">
-      <path d="M512 86 L512 262" stroke="currentColor" stroke-width="30" stroke-linecap="round"/>
-      <path d="M512 246 C 566 330 690 440 690 616 C 690 788 610 886 512 886 C 414 886 334 788 334 616 C 334 440 458 330 512 246 Z" fill="currentColor" stroke="currentColor" stroke-width="16" stroke-linejoin="round" mask="url(#wings)"/>
-    </symbol>
+    <g id="wing-r">
+      <path d="M526 600 C 530 520 590 440 672 430 C 702 428 710 456 698 488 C 678 548 610 596 526 628 Z"/>
+      <path d="M526 650 C 586 652 640 686 638 738 C 636 788 590 800 562 772 C 540 750 530 706 526 666 Z"/>
+    </g>
+    <mask id="m-static" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024"><rect width="1024" height="1024" fill="#fff"/><g fill="#000" transform="translate(512 652) scale(.8) translate(-512 -615)"><use href="#wing-r"/><use href="#wing-r" transform="translate(1024 0) scale(-1 1)"/></g></mask>
+    <mask id="m-hero" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024"><rect width="1024" height="1024" fill="#fff"/><g fill="#000" transform="translate(512 652) scale(.8) translate(-512 -615)"><g id="hero-wings" transform="translate(512 615) scale(0.06 1) translate(-512 -615)"><use href="#wing-r"/><use href="#wing-r" transform="translate(1024 0) scale(-1 1)"/></g></g></mask>
+    <mask id="m-final" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024"><rect width="1024" height="1024" fill="#fff"/><g fill="#000" transform="translate(512 652) scale(.8) translate(-512 -615)"><g id="final-wings" transform="translate(512 615) scale(1 1) translate(-512 -615)"><use href="#wing-r"/><use href="#wing-r" transform="translate(1024 0) scale(-1 1)"/></g></g></mask>
+    <path id="pod-body" d="M512 246 C 566 330 690 440 690 616 C 690 788 610 886 512 886 C 414 886 334 788 334 616 C 334 440 458 330 512 246 Z"/>
   </defs>
 </svg>
 
-<div class="sky"></div>
-
-<nav class="top" id="nav">
+<nav class="nav" id="nav" aria-label="Main">
   <div class="wrap">
-    <a class="brand" href="#top" aria-label="Cocoon home"><svg viewBox="320 60 384 840" aria-hidden="true"><path d="M512 86 L512 262" stroke="#fff" stroke-width="30" stroke-linecap="round"/><path d="M512 246 C 566 330 690 440 690 616 C 690 788 610 886 512 886 C 414 886 334 788 334 616 C 334 440 458 330 512 246 Z" fill="#fff" mask="url(#wings)"/></svg>cocoon</a>
-    <div class="links">
-      <a href="#how">How it works</a>
-      <a href="#features">Features</a>
-      <a href="#ship">App Store</a>
+    <a class="brand" href="#top" aria-label="Cocoon beta, back to top">
+      <svg viewBox="320 60 384 840" aria-hidden="true"><path d="M512 86 L512 262" stroke="currentColor" stroke-width="30" stroke-linecap="round"/><use href="#pod-body" fill="currentColor" mask="url(#m-static)"/></svg>cocoon<span class="beta">BETA</span>
+    </a>
+    <div class="nav-links">
+      <a href="#guided">How it works</a>
+      <a href="#native">What you can build</a>
+      <a href="#ship">Publishing</a>
       <a href="#github">GitHub</a>
       <a href="#faq">FAQ</a>
     </div>
-    <a class="btn primary" href="#get">Get early access</a>
+    <a class="btn btn-primary" href="#join">Join the beta</a>
   </div>
 </nav>
 
-<header class="hero" id="top">
-  <div class="wrap">
-    <svg class="hero-mark" viewBox="320 60 384 840" style="color:#7457FF" aria-hidden="true">
-      <path d="M512 86 L512 262" stroke="url(#vg)" stroke-width="30" stroke-linecap="round"/>
-      <path d="M512 246 C 566 330 690 440 690 616 C 690 788 610 886 512 886 C 414 886 334 788 334 616 C 334 440 458 330 512 246 Z" fill="url(#vg)" mask="url(#wings)"/>
-    </svg>
-    <div class="eyebrow"><b>NEW</b> Now every app is safely synced to GitHub</div>
-    <h1><span style="white-space:nowrap">From idea</span> <span style="white-space:nowrap">to App Store.</span><br><span class="glow">No code.</span></h1>
-    <p class="lede">Cocoon is a Mac app that turns a conversation into a real website, iPhone or Android app — and ships it to the web, the App Store and Google Play. You describe it. Cocoon builds it.</p>
-    <div class="cta-row">
-      <a class="btn primary lg" href="#get">Get early access
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-      <a class="btn ghost lg" href="#how">See how it works</a>
-    </div>
-    <p class="req">For Macs with Apple silicon · macOS 26</p>
-  </div>
-
-  <div class="stage reveal">
-    <div class="window" role="img" aria-label="Cocoon building a booking app for a yoga studio while the user chats with it">
-      <div class="titlebar">
-        <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
-        <div class="seg"><span class="on">Preview</span><span>API</span><span>Docs</span><span>Architecture</span></div>
-        <span class="pill"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Synced</span>
+<main id="top">
+  <!-- 1. Hero: the app grows out of the cocoon -->
+  <section class="meta" id="meta" aria-label="Cocoon turns an idea into an app">
+    <div class="meta-bg"></div>
+    <div class="wrap hero-grid">
+      <div class="hero-copy" id="heroCopy">
+        <h1>
+          <span class="line"><span style="--i:0">Your idea goes in.</span></span>
+          <span class="line"><span style="--i:1">An <em>app</em> comes out.</span></span>
+        </h1>
+        <p>Build real websites and native iPhone and Android apps by describing them. No coding, no setup, all on your Mac.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary" href="#join">Join the beta <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
+          <a class="btn btn-quiet" href="#guided">See how it works</a>
+        </div>
       </div>
-      <div class="app">
-        <div class="canvas">
-          <div class="phone">
-            <div class="screen" id="screen">
-              <div class="bar"></div>
-              <div class="scr-head"><small>Today · Studio Flow</small><h4 id="appTitle">Book a class</h4></div>
-              <div class="slots">
-                <div class="slot"><span class="time">07:00</span><span class="what">Sunrise Vinyasa</span><span class="book">Book</span></div>
-                <div class="slot"><span class="time">09:30</span><span class="what">Gentle Hatha</span><span class="book">Book</span></div>
-                <div class="slot"><span class="time">12:15</span><span class="what">Lunch Flow · 30 min</span><span class="book">Book</span></div>
-                <div class="slot"><span class="time">18:00</span><span class="what">Power Yoga</span><span class="book">Book</span></div>
-                <div class="slot"><span class="time">19:30</span><span class="what">Yin &amp; Breath</span><span class="book">Book</span></div>
-              </div>
-              <div class="tabbar"><span class="on"></span><span></span><span></span><span></span></div>
-            </div>
+    </div>
+    <div class="rig" id="rig" aria-hidden="true">
+      <div class="rig-move" id="rigMove"><div class="rig-swing" id="rigSwing">
+        <div class="thread" id="thread"></div>
+        <div class="pod" id="pod"><svg viewBox="320 240 384 660"><use href="#pod-body" fill="var(--accent)" mask="url(#m-hero)"/></svg></div>
+      </div></div>
+    </div>
+    <div class="reveal-app" id="revealApp">
+      <img src="assets/screens/home.jpg" width="2000" height="1255" alt="Cocoon on a Mac. The home screen asks “What do you want to build?” above a prompt box, a Guide me step by step button and ideas such as Online shop, Bookings and Personal tracker.">
+    </div>
+    <div class="captions" id="captions" aria-hidden="true">
+      <span>Say what you want to build.</span>
+      <span>Cocoon writes it, builds it and runs it on your Mac.</span>
+      <span>Then change anything by asking.</span>
+    </div>
+  </section>
+
+  <!-- 2. Works with (logos only) -->
+  <section class="wall" aria-label="Works with">
+    <div class="wrap row fade-up">
+      <span class="logo l-apple" role="img" aria-label="Apple"></span>
+      <span class="logo l-appstore" role="img" aria-label="App Store"></span>
+      <span class="logo l-android" role="img" aria-label="Android"></span>
+      <span class="logo l-googleplay" role="img" aria-label="Google Play"></span>
+      <span class="logo l-github" role="img" aria-label="GitHub"></span>
+      <span class="logo l-vercel" role="img" aria-label="Vercel"></span>
+      <span class="logo l-fly" role="img" aria-label="Fly.io"></span>
+      <span class="logo l-openrouter" role="img" aria-label="OpenRouter"></span>
+      <span class="logo l-claude" role="img" aria-label="Claude"></span>
+      <span class="logo l-swift" role="img" aria-label="Swift"></span>
+      <span class="logo l-kotlin" role="img" aria-label="Kotlin"></span>
+    </div>
+  </section>
+
+  <!-- 3. Made for everyday people: the real guided wizard, stacked on scroll -->
+  <section class="guided" id="guided">
+    <div class="wrap guided-pin" id="guidedPin">
+      <div class="copy">
+        <p class="eyebrow">Made for everyday people</p>
+        <h2>If you can describe it, you can build it.</h2>
+        <p class="lead">No code and no jargon. Cocoon asks a few friendly questions, shows you the plan, then builds.</p>
+        <ol class="steps-list" id="stepsList">
+          <li class="on"><b>Your idea</b>In your own words. Short is fine.</li>
+          <li><b>Features</b>Sign-in, payments, maps. Tick what it needs.</li>
+          <li><b>The look</b>Pick a style and colour, see it live.</li>
+          <li><b>The plan</b>Check it, press Build my app.</li>
+        </ol>
+      </div>
+      <div class="stack" id="stack">
+        <img src="assets/screens/wizard-describe.jpg" width="1600" height="1152" alt="Cocoon's guide: Tell us your idea, with a text box and an app icon called Yoga Spot.">
+        <img src="assets/screens/wizard-features.jpg" width="1600" height="1152" alt="Cocoon's guide: What should it do? Cards for sign-in, photos, search, admin area, email notifications, payments, maps and dark mode.">
+        <img src="assets/screens/wizard-style.jpg" width="1600" height="1152" alt="Cocoon's guide: Make it yours. Style cards and colours next to a live preview of the app.">
+        <img src="assets/screens/wizard-plan.jpg" width="1600" height="1152" alt="Cocoon's guide: Here's your plan, summarising the website, its features and look, with a Build my app button.">
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Your choice of AI (real screen) -->
+  <section class="ai" id="ai">
+    <div class="wrap ai-grid">
+      <div class="shot fade-up"><img src="assets/screens/cloud.jpg" width="1600" height="1056" loading="lazy" alt="Cocoon's Connect a cloud AI screen with OpenRouter connected and buttons to connect Claude or OpenAI."></div>
+      <div class="copy fade-up" style="--d:1">
+        <h2>The best AIs, one click away.</h2>
+        <p class="lead">Connect OpenRouter, Claude or OpenAI without copying a single key. Cocoon catches it for you and keeps it in your Mac's Keychain.</p>
+        <div class="providers">
+          <span class="logo l-openrouter" role="img" aria-label="OpenRouter"></span>
+          <span class="logo l-claude" role="img" aria-label="Claude"></span>
+          <span class="word">OpenAI</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Native apps, running on your Mac -->
+  <section class="native" id="native">
+    <div class="wrap">
+      <div class="native-head fade-up"><h2>Real native apps. Running on your Mac.</h2></div>
+      <div class="bento">
+        <article class="cell ios fade-up">
+          <div class="phone-ghost"><span class="logo l-apple" role="img" aria-label="Apple"></span><span class="logo l-swift" role="img" aria-label="Swift"></span><span class="logo l-xcode" role="img" aria-label="Xcode"></span></div>
+          <div class="big-word">iPhone</div>
+          <h3>Native iPhone apps in SwiftUI</h3>
+          <p>The same language Apple's own apps use. Watch yours run in the iPhone simulator on your Mac, then try it on your real iPhone with TestFlight.</p>
+        </article>
+        <article class="cell android fade-up" style="--d:1">
+          <div class="logos"><span class="logo l-android" role="img" aria-label="Android"></span><span class="logo l-kotlin" role="img" aria-label="Kotlin"></span><span class="logo l-compose" role="img" aria-label="Jetpack Compose"></span></div>
+          <h3>Native Android apps</h3>
+          <p>Kotlin and Jetpack Compose, running in the Android emulator right next to your chat.</p>
+        </article>
+        <article class="cell web fade-up" style="--d:2">
+          <div class="logos"><span class="logo l-react" role="img" aria-label="React"></span><span class="logo l-next" role="img" aria-label="Next.js"></span><span class="logo l-rails" role="img" aria-label="Ruby on Rails"></span><span class="logo l-postgres" role="img" aria-label="PostgreSQL"></span></div>
+          <h3>Websites with real databases</h3>
+          <p>Shops, bookings and dashboards that store data, previewed live as Cocoon builds them.</p>
+        </article>
+        <article class="cell ask fade-up">
+          <img src="assets/screens/chat-composer.jpg" width="900" height="237" loading="lazy" alt="Cocoon's chat box with suggestions: Run my app, Make it look great, Add a login page, Add dark mode.">
+          <h3>Change anything by asking</h3>
+          <p>“Make the header blue.” “Add a login page.” Every change shows up in seconds, and every version is saved so you can always go back.</p>
+        </article>
+        <article class="cell mac fade-up" style="--d:1">
+          <i class="ph ph-laptop" style="font-size:40px" aria-hidden="true"></i>
+          <h3>Everything stays on your Mac</h3>
+          <p>Your apps, your code and your keys live on your machine, under your own accounts.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. How publishing works (horizontal pan) -->
+  <section class="ship" id="ship">
+    <div class="wrap ship-head fade-up">
+      <h2>Publishing, explained in four steps.</h2>
+      <p class="lead">No servers to configure and no certificates to understand. Cocoon picks the right place for your app and walks you through the rest.</p>
+    </div>
+    <div class="pan" id="pan">
+      <div class="track" id="track">
+        <article class="panel">
+          <div class="n">Choose where</div>
+          <div class="shot"><img src="assets/screens/publish.jpg" width="1600" height="1244" loading="lazy" alt="Cocoon's Launch it to the world screen recommending Fly.io over Vercel for an app with a database."></div>
+          <h3>Cocoon picks the right home</h3>
+          <p>Vercel for websites, Fly.io for apps with a database. It explains why, in plain words.</p>
+        </article>
+        <article class="panel">
+          <div class="n">Connect once</div>
+          <div class="logos"><span class="logo l-vercel" role="img" aria-label="Vercel"></span><span class="logo l-fly" role="img" aria-label="Fly.io"></span></div>
+          <div class="stacked" aria-hidden="true">
+            <div class="signin"><span class="logo l-google"></span>Continue with Google</div>
+            <div class="signin"><span class="logo l-github"></span>Continue with GitHub</div>
+            <div class="signin"><i class="ph ph-envelope-simple"></i>Continue with email</div>
           </div>
-          <div class="float-card fc-1"><div class="ic" style="background:rgba(106,76,255,.2)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h10M4 17h7" stroke="#B9AAFF" stroke-width="2" stroke-linecap="round"/></svg></div><div>Writing the screens<small>3 of 5 steps · about 2 min left</small></div></div>
-          <div class="float-card fc-2"><div class="ic" style="background:rgba(61,220,132,.15)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#3DDC84" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div>Build passed<small>Running on iPhone 17</small></div></div>
-          <div class="float-card fc-3"><div class="ic" style="background:rgba(255,255,255,.08)"><svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 0 0-3.2 19.5c.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.3-3.4-1.3-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .8.1-.7.4-1.1.6-1.3-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.8 1a9.6 9.6 0 0 1 5 0c1.9-1.3 2.8-1 2.8-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.4 4.7-4.6 5 .4.3.7.9.7 1.9V21c0 .3.2.6.7.5A10 10 0 0 0 12 2z"/></svg></div><div>Saved to GitHub<small>Private · 12 seconds ago</small></div></div>
-        </div>
-        <div class="chat" id="chat">
-          <div class="bubble me">A booking app for my yoga studio — people pick a class and reserve a spot.</div>
-          <div class="bubble ai">On it. I'm building an iPhone app with a class schedule and bookings.
-            <div class="step"><i>✓</i>Created the app</div>
-            <div class="step"><i>✓</i>Wrote the schedule and booking screens</div>
-            <div class="step"><i>✓</i>Running it on the iPhone simulator</div>
+          <h3>Sign in with Google, GitHub or email</h3>
+          <p>The sign-in opens inside Cocoon. No tokens to copy, no command line. Cocoon remembers it safely on your Mac.</p>
+        </article>
+        <article class="panel">
+          <div class="n">Go live</div>
+          <div class="stacked">
+            <div class="url"><i class="ph ph-lock-simple" aria-hidden="true"></i>studio-flow.fly.dev<small>Live</small></div>
+            <div class="url"><i class="ph ph-globe-simple" aria-hidden="true"></i>studioflow.com<small>Your domain, HTTPS</small></div>
           </div>
-          <div class="bubble me" id="ask2">Make it feel calmer — sage green, and call it “Studio Flow”.</div>
-          <div class="bubble ai" id="ans2">Done — new colours and name are live in the preview. Want reminders before class?</div>
-          <div class="composer"><span id="typed" class="typed"></span><span class="caret"></span><span class="send"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M8 13V3M4 7l4-4 4 4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <h3>A real address in about a minute</h3>
+          <p>Your app gets a secure link to share. Add your own domain later, and Cocoon sets up the DNS for you when it can.</p>
+        </article>
+        <article class="panel store">
+          <div class="n">Phones too</div>
+          <div class="logos"><span class="logo l-appstore" role="img" aria-label="App Store"></span><span class="logo l-googleplay" role="img" aria-label="Google Play"></span></div>
+          <div class="checks">
+            <div><i class="ph ph-check-circle" aria-hidden="true"></i>Your app's identity<small>Automatic</small></div>
+            <div><i class="ph ph-check-circle" aria-hidden="true"></i>Build and send to Apple<small>Automatic</small></div>
+            <div class="now"><i class="ph ph-device-mobile" aria-hidden="true"></i>Try it on your iPhone<small>TestFlight</small></div>
+            <div><i class="ph ph-images" aria-hidden="true"></i>Screenshots<small>Automatic</small></div>
+            <div><i class="ph ph-paper-plane-tilt" aria-hidden="true"></i>Send to App Review<small>One click</small></div>
+          </div>
+          <h3>All the way to the stores</h3>
+          <p>A calm checklist for the App Store and Google Play. Most steps run by themselves.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Under the hood: the real architecture map -->
+  <section class="hood" id="hood">
+    <div class="wrap">
+      <div class="hood-grid">
+        <div class="left fade-up">
+          <p class="eyebrow">Under the hood</p>
+          <h2>See how your app fits together.</h2>
+        </div>
+        <div class="right fade-up" style="--d:1">
+          <ul>
+            <li><i class="ph ph-graph" aria-hidden="true"></i>A living diagram of screens, logic and data, drawn from your code.</li>
+            <li><i class="ph ph-code" aria-hidden="true"></i>A real, clean codebase you own. Hand it to a developer whenever you want.</li>
+            <li><i class="ph ph-book-open-text" aria-hidden="true"></i>Docs and an API explorer, written for you.</li>
+          </ul>
         </div>
       </div>
+      <div class="zoom fade-up"><img id="archImg" src="assets/screens/architecture.jpg" width="1800" height="1190" loading="lazy" alt="Cocoon's architecture view of a Ruby on Rails app: browser, routes and controllers, the Record and Report models, and a SQLite database, grouped in layers."></div>
     </div>
-  </div>
-</header>
+  </section>
 
-<div class="strip reveal">
-  <div class="wrap">
-    <p>Build for · ship to</p>
-    <div class="row">
-      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18"/></svg>Websites</span>
-      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="2" width="10" height="20" rx="3"/></svg>iPhone</span>
-      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M10 19h4"/></svg>Android</span>
-      <span class="chip">App Store</span>
-      <span class="chip">Google Play</span>
-      <span class="chip">Vercel</span>
-      <span class="chip">Fly.io</span>
-      <span class="chip">GitHub</span>
-    </div>
-  </div>
-</div>
-
-<section id="how">
-  <div class="wrap">
-    <div class="center reveal">
-      <div class="kicker">How it works</div>
-      <h2>Three steps. Zero setup.</h2>
-      <p class="sub">No terminal, no frameworks to pick, no accounts to configure. Cocoon installs what it needs and walks you through the rest.</p>
-    </div>
-    <div class="steps">
-      <div class="step-card reveal">
-        <div class="vis"><div class="idea">“An online shop for my ceramics, with a cart and checkout”</div></div>
-        <h3>Describe it</h3>
-        <p>Say what you want in your own words — or let the guide ask a few friendly questions about who it's for and how it should look.</p>
-      </div>
-      <div class="step-card reveal">
-        <div class="vis">
-          <div class="progress">
-            <span class="n done">✓</span><span class="ln done"></span>
-            <span class="n done">✓</span><span class="ln done"></span>
-            <span class="n now">3</span><span class="ln"></span>
-            <span class="n">4</span><span class="ln"></span>
-            <span class="n">5</span>
+  <!-- 8. GitHub -->
+  <section class="gh" id="github">
+    <div class="wrap">
+      <div class="gh-card">
+        <div class="copy fade-up">
+          <span class="logo l-github" role="img" aria-label="GitHub"></span>
+          <h2>Always safe on GitHub.</h2>
+          <p class="lead">Sign in once and every app gets a private GitHub copy that syncs by itself. Changes on both sides are never overwritten: you choose.</p>
+          <div class="sync-states" id="syncStates">
+            <span class="on"><i class="ph ph-check" aria-hidden="true"></i>Synced</span>
+            <span><i class="ph ph-arrows-clockwise" aria-hidden="true"></i>Saving</span>
+            <span><i class="ph ph-cloud-arrow-up" aria-hidden="true"></i>2 waiting</span>
           </div>
         </div>
-        <h3>Watch it come to life</h3>
-        <p>Cocoon writes the code, builds it and runs it in a live preview — a browser, an iPhone or an Android phone, right on your Mac.</p>
-      </div>
-      <div class="step-card reveal">
-        <div class="vis"><div class="ship"><span class="live">● Live</span><span>App Store</span><span>Google Play</span></div></div>
-        <h3>Ship it</h3>
-        <p>One click puts your site online. For phones, a guided journey takes you all the way to the App Store and Google Play.</p>
+        <div class="shot fade-up" style="--d:1"><img src="assets/screens/setup-github.jpg" width="1600" height="1137" loading="lazy" alt="Cocoon's setup step: Keep every app safe on GitHub, with a Sign in with GitHub button."></div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section id="features" style="padding-top: 40px">
-  <div class="wrap">
-    <div class="reveal">
-      <div class="kicker">Features</div>
-      <h2>Everything a real app needs.<br>Nothing you have to learn.</h2>
+  <!-- 9. Stacks (the one marquee) -->
+  <section class="marquee" aria-label="Tools Cocoon builds with">
+    <div class="wrap"><p class="intro fade-up">Built on the same tools professional teams use.</p></div>
+    <div class="row" id="marquee">
+      <span class="item"><span class="logo l-react" aria-hidden="true"></span>React</span>
+      <span class="item"><span class="logo l-swift" aria-hidden="true"></span>SwiftUI</span>
+      <span class="item"><span class="logo l-rails" aria-hidden="true"></span>Rails</span>
+      <span class="item"><span class="logo l-kotlin" aria-hidden="true"></span>Kotlin</span>
+      <span class="item"><span class="logo l-next" aria-hidden="true"></span>Next.js</span>
+      <span class="item"><span class="logo l-django" aria-hidden="true"></span>Django</span>
+      <span class="item"><span class="logo l-postgres" aria-hidden="true"></span>PostgreSQL</span>
+      <span class="item"><span class="logo l-fastapi" aria-hidden="true"></span>FastAPI</span>
+      <span class="item"><span class="logo l-laravel" aria-hidden="true"></span>Laravel</span>
+      <span class="item"><span class="logo l-vue" aria-hidden="true"></span>Vue</span>
+      <span class="item"><span class="logo l-svelte" aria-hidden="true"></span>Svelte</span>
+      <span class="item"><span class="logo l-go" aria-hidden="true"></span>Go</span>
     </div>
-    <div class="bento">
-      <div class="tile xwide glow reveal">
-        <div class="say"><span>Add a contact form</span><span>Make the header blue and the logo bigger</span><span>Let people sign in with email</span></div>
-        <h3>Change anything by asking</h3>
-        <p>Talk to your app like you'd talk to a developer. Every change shows up in the preview seconds later — and every version is saved, so you can always go back.</p>
-      </div>
-      <div class="tile reveal">
-        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8"/><path d="M10 9l4 2-4 2z" fill="currentColor"/></svg></div>
-        <h3>Live preview</h3>
-        <p>Websites in a browser, iPhone apps in the simulator, Android apps in the emulator — all inside Cocoon.</p>
-      </div>
-      <div class="tile wide reveal">
-        <div class="stacks"><span>React</span><span>Next.js</span><span>Vue</span><span>Svelte</span><span>Rails</span><span>Django</span><span>FastAPI</span><span>Flask</span><span>Laravel</span><span>Express</span><span>Go</span><span>SwiftUI</span><span>Jetpack Compose</span><span>PostgreSQL</span><span>SQLite</span></div>
-        <h3>Real code, on real stacks</h3>
-        <p>Cocoon builds with the same tools professional teams use — so your app can grow, and any developer can pick it up later.</p>
-      </div>
-      <div class="tile wide reveal">
-        <div class="ai-row"><span>OpenRouter</span><span>Claude</span><span>GPT</span><span>+ your Mac helps with small jobs</span></div>
-        <h3>The best AI, your choice</h3>
-        <p>Connect a cloud AI in one click — OpenRouter, Claude or OpenAI. No keys to find or paste: Cocoon catches them for you.</p>
-      </div>
-      <div class="tile reveal">
-        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
-        <h3>Private by design</h3>
-        <p>Your code lives on your Mac and your own accounts. Passwords and keys never leave it.</p>
-      </div>
-      <div class="tile reveal">
-        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M7.5 8l3.5 8M16.5 8L13 16"/></svg></div>
-        <h3>See how it fits together</h3>
-        <p>A living architecture map, generated docs and an API explorer — for when you're curious.</p>
-      </div>
-      <div class="tile reveal">
-        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18"/></svg></div>
-        <h3>Online in a minute</h3>
-        <p>Publish to Vercel or Fly.io with one click — databases included — and add your own domain.</p>
-      </div>
-    </div>
-  </div>
-</section>
+  </section>
 
-<section id="ship">
-  <div class="wrap journey">
-    <div class="reveal">
-      <div class="kicker">App Store &amp; Google Play</div>
-      <h2>The hard part,<br>handled.</h2>
-      <p class="sub">Certificates, app IDs, icons, screenshots, privacy answers, review. Cocoon turns the whole store process into a checklist — and does most of it for you.</p>
-      <div class="points">
-        <div class="point"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div><div><b>Most steps are automatic</b><span>Signing, building, uploading, screenshots and your store page text.</span></div></div>
-        <div class="point"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg></div><div><b>Apple's and Google's sites, inside Cocoon</b><span>We open the right page, fill in what we know and catch the files you download.</span></div></div>
-        <div class="point"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg></div><div><b>Plain words when something's off</b><span>Wrong Apple team, missing icon, an agreement to accept — explained, with the fix one click away.</span></div></div>
+  <!-- 10. FAQ -->
+  <section class="faq" id="faq">
+    <div class="wrap faq-grid">
+      <div class="left"><h2>Good questions.</h2></div>
+      <div class="right">
+        <details open><summary>Do I need to know how to code?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>No. You describe what you want and ask for changes in plain words. The code is there if you ever want it, behind one small button.</p></details>
+        <details><summary>Can a developer take over my app later?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>Yes. Cocoon writes a normal codebase on standard tools, with documentation and a full history on GitHub. Any developer can pick it up.</p></details>
+        <details><summary>What does it cost to run?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>You pay the AI you connect as you go; OpenRouter can start free. Publishing a website can be free. Apple charges $99 a year and Google Play $25 once, only if you ship to their stores.</p></details>
+        <details><summary>Who owns what I build?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>You do. The code is on your Mac and in your own GitHub, published under your own accounts. If you stop using Cocoon, everything keeps working.</p></details>
+        <details><summary>What does beta mean?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>Cocoon works today and is improving every week. Some things will change, and your feedback decides what comes next.</p></details>
+        <details><summary>What do I need?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>A Mac with Apple silicon running macOS 26. Cocoon downloads everything else during a one-time setup, and shows you the progress.</p></details>
       </div>
     </div>
-    <div class="list reveal" id="journey">
-      <div class="li"><span class="c">1</span><div><b>Join Apple's developer program</b><small>You do this · we guide you</small></div></div>
-      <div class="li"><span class="c">2</span><div><b>Connect App Store Connect</b><small>Create a key once — we catch it</small></div></div>
-      <div class="li"><span class="c">3</span><div><b>Your app's identity</b><small>Registered for you</small></div><span class="tag">⚡ Automatic</span></div>
-      <div class="li"><span class="c">4</span><div><b>Create the app listing</b><small>We fill it in — you press Create</small></div></div>
-      <div class="li"><span class="c">5</span><div><b>Build &amp; send to Apple</b><small>Signed and uploaded</small></div><span class="tag">⚡ Automatic</span></div>
-      <div class="li"><span class="c">6</span><div><b>Try it on your iPhone</b><small>TestFlight, before the App Store</small></div><span class="tag">⚡ Automatic</span></div>
-      <div class="li"><span class="c">7</span><div><b>Your App Store page</b><small>Description and keywords, written for you</small></div><span class="tag">⚡ Automatic</span></div>
-      <div class="li"><span class="c">8</span><div><b>Screenshots</b><small>Captured from your app, sized for Apple</small></div><span class="tag">⚡ Automatic</span></div>
-      <div class="li"><span class="c">9</span><div><b>Privacy, age rating &amp; price</b><small>Answered from your code — you confirm</small></div><span class="tag">⚡ Automatic</span></div>
-      <div class="li"><span class="c">10</span><div><b>Send to App Review</b><small>One click — Apple replies in about a day</small></div><span class="tag">⚡ Automatic</span></div>
-    </div>
-  </div>
-</section>
+  </section>
 
-<section id="github" style="padding-top: 40px">
-  <div class="wrap">
-    <div class="gh reveal">
-      <div>
-        <div class="kicker">Always backed up</div>
-        <h2>Every app, safely on GitHub.</h2>
-        <p class="sub">Sign in once and each app gets its own private GitHub copy that keeps itself up to date. If anything happens to your Mac, nothing is lost — and a developer can join you anytime.</p>
-        <div class="points">
-          <div class="point"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></div><div><b>Syncs by itself</b><span>Every change uploads seconds later; edits made elsewhere are picked up too.</span></div></div>
-          <div class="point"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></div><div><b>Never overwrites your work</b><span>Changed on GitHub and here? Both versions are kept — you choose.</span></div></div>
-        </div>
+  <!-- 11. Finale -->
+  <section class="finale" id="join">
+    <div class="wrap">
+      <div class="emerge" id="emerge" aria-hidden="true">
+        <svg class="shell" viewBox="320 60 384 840"><path d="M512 86 L512 262" stroke="currentColor" stroke-width="30" stroke-linecap="round"/><use href="#pod-body" fill="currentColor" mask="url(#m-final)"/></svg>
+        <svg class="fly" id="fly" viewBox="330 420 364 400"><g fill="currentColor" transform="translate(512 652) scale(.8) translate(-512 -615)"><g id="fly-r"><use href="#wing-r"/></g><g id="fly-l"><use href="#wing-r" transform="translate(1024 0) scale(-1 1)"/></g></g></svg>
       </div>
-      <div class="sync">
-        <span class="sync-pill" id="syncPill"><span class="d" id="syncDot" style="background:#3DDC84"></span><span id="syncText">Synced</span></span>
-        <div class="timeline">
-          <div>Added online booking<small>Just now · uploaded</small></div>
-          <div>Calmer colours, renamed to Studio Flow<small>4 minutes ago</small></div>
-          <div>Class schedule and booking screens<small>9 minutes ago</small></div>
-          <div>Created the iPhone app<small>12 minutes ago</small></div>
-        </div>
-      </div>
+      <h2 class="fade-up">Your idea is ready to fly.</h2>
+      <p class="fade-up">Cocoon is in beta for Mac. Join now, build your first app this week, and help shape what comes next.</p>
+      <div class="fade-up"><a class="btn btn-primary" href="https://github.com/cocoon-app">Join the beta <i class="ph ph-arrow-right" aria-hidden="true"></i></a></div>
     </div>
-  </div>
-</section>
-
-<section id="faq" style="padding-top: 40px">
-  <div class="wrap">
-    <div class="center reveal">
-      <div class="kicker">FAQ</div>
-      <h2>Questions, answered.</h2>
-    </div>
-    <div class="faq reveal">
-      <details open><summary>Do I need to know how to code?</summary><p>No. Cocoon is made for people with ideas, not engineering degrees. You describe what you want and ask for changes in plain words. The code is there if you ever want it — tucked behind one small button.</p></details>
-      <details><summary>What can I build?</summary><p>Websites and web apps (shops, bookings, portfolios, dashboards, communities, games), native iPhone apps and native Android apps — including apps that need a database or an online backend.</p></details>
-      <details><summary>What does it cost to run?</summary><p>Cocoon connects to a cloud AI you choose, paid as you go — about $5 of credit builds many apps. Publishing a website can be free; Apple's developer program is $99/year and Google Play is a one-time $25 — only if you ship to the stores.</p></details>
-      <details><summary>Who owns my apps?</summary><p>You do. Your code lives on your Mac and in your own GitHub, published under your own Vercel, Fly.io, Apple and Google accounts. Stop using Cocoon tomorrow and everything you built keeps working.</p></details>
-      <details><summary>What do I need?</summary><p>A Mac with Apple silicon running macOS 26. Cocoon downloads everything else it needs — like Apple's tools for iPhone apps — during a one-time setup, with progress you can see.</p></details>
-    </div>
-  </div>
-</section>
-
-<section class="final" id="get">
-  <div class="wrap reveal" style="position:relative">
-    <svg class="big-mark" viewBox="320 60 384 840" aria-hidden="true">
-      <path d="M512 86 L512 262" stroke="url(#vg)" stroke-width="30" stroke-linecap="round"/>
-      <path d="M512 246 C 566 330 690 440 690 616 C 690 788 610 886 512 886 C 414 886 334 788 334 616 C 334 440 458 330 512 246 Z" fill="url(#vg)" mask="url(#wings)"/>
-    </svg>
-    <h2>Your idea is ready<br>to leave its cocoon.</h2>
-    <p class="sub" style="margin: 0 auto 36px">Cocoon is in early access for Mac. Be among the first to build with it.</p>
-    <div class="cta-row">
-      <a class="btn primary lg" id="ctaPrimary" href="https://github.com/cocoon-app">Get early access</a>
-      <a class="btn ghost lg" href="https://github.com/cocoon-app">Follow on GitHub</a>
-    </div>
-  </div>
-</section>
+  </section>
+</main>
 
 <footer>
   <div class="wrap">
-    <a class="brand" href="#top"><svg viewBox="320 60 384 840" aria-hidden="true"><path d="M512 86 L512 262" stroke="#fff" stroke-width="30" stroke-linecap="round"/><path d="M512 246 C 566 330 690 440 690 616 C 690 788 610 886 512 886 C 414 886 334 788 334 616 C 334 440 458 330 512 246 Z" fill="#fff" mask="url(#wings)"/></svg>cocoon</a>
+    <a class="brand" href="#top"><svg viewBox="320 60 384 840" aria-hidden="true"><path d="M512 86 L512 262" stroke="currentColor" stroke-width="30" stroke-linecap="round"/><use href="#pod-body" fill="currentColor" mask="url(#m-static)"/></svg>cocoon<span class="beta">BETA</span></a>
     <span>© 2026 Cocoon</span>
-    <nav>
-      <a href="#how">How it works</a>
-      <a href="#features">Features</a>
-      <a href="#faq">FAQ</a>
-      <a href="https://github.com/cocoon-app">GitHub</a>
-    </nav>
+    <nav aria-label="Footer"><a href="#guided">How it works</a><a href="#faq">FAQ</a><a href="https://github.com/cocoon-app">GitHub</a></nav>
+    <p class="legal">Apple, App Store, iPhone, Swift and Xcode are trademarks of Apple Inc. Android, Google Play, Kotlin and Jetpack Compose belong to Google LLC and JetBrains. GitHub, Vercel, Fly.io, OpenRouter, Claude, OpenAI and the other names are trademarks of their owners. Logos via Simple Icons.</p>
   </div>
-  <div class="wrap" style="margin-top:14px; font-size:12px; color:#4E4B5E">App Store and iPhone are trademarks of Apple Inc. Google Play and Android are trademarks of Google LLC. Other names are trademarks of their respective owners.</div>
 </footer>
 
 <script>
-(() => {
+window.addEventListener('DOMContentLoaded', () => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = s => document.querySelector(s);
 
-  // Sticky nav border
-  const nav = document.getElementById('nav');
-  addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 10), { passive: true });
+  // Nav turns solid once the page moves (sentinel + IntersectionObserver, no scroll listener).
+  const sentinel = Object.assign(document.createElement('div'), { style: 'position:absolute;top:0;height:40px;width:1px' });
+  document.body.prepend(sentinel);
+  new IntersectionObserver(([e]) => $('#nav').classList.toggle('solid', !e.isIntersecting)).observe(sentinel);
 
-  // Reveal on scroll
-  const io = new IntersectionObserver(entries => entries.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-  }), { threshold: .14 });
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  // Sections arrive in reading order.
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .15 });
+  document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
 
-  // Hero: the app builds itself, then changes on request
-  const slots = [...document.querySelectorAll('.slot')];
-  const bubbles = [...document.querySelectorAll('#chat .bubble')];
-  const screen = document.getElementById('screen');
-  const title = document.getElementById('appTitle');
-  const typed = document.getElementById('typed');
-  const ideas = ['Add reminders an hour before class', 'Let teachers see who booked', 'Ship it to the App Store'];
-  const wait = ms => new Promise(r => setTimeout(r, ms));
-  async function type(text) {
-    typed.textContent = '';
-    for (const ch of text) { typed.textContent += ch; await wait(38); }
+  // ---- The cocoon on its silk thread, sized to the viewport, swinging with the pointer ----
+  const rig = $('#rig'), thread = $('#thread'), pod = $('#pod'), swing = $('#rigSwing');
+  function layoutRig() {
+    const h = rig.clientHeight, podW = Math.min(Math.max(innerWidth * .15, 150), 250), len = Math.max(h * .27, 120);
+    thread.style.height = len + 'px'; pod.style.width = podW + 'px'; pod.style.top = (len - podW * .03) + 'px';
   }
-  async function loop() {
-    while (true) {
-      screen.style.setProperty('--accent', '#6A4CFF'); title.style.color = ''; title.textContent = 'Book a class';
-      slots.forEach(s => s.classList.remove('show')); bubbles.forEach(b => b.classList.remove('show')); typed.textContent = '';
-      await wait(500);
-      bubbles[0].classList.add('show'); await wait(900);
-      bubbles[1].classList.add('show');
-      for (const s of slots) { s.classList.add('show'); await wait(260); }
-      await wait(1200);
-      bubbles[2].classList.add('show'); await wait(1100);
-      screen.style.setProperty('--accent', '#5E8C6A'); title.style.color = '#3F6B4C'; title.textContent = 'Studio Flow';
-      bubbles[3].classList.add('show'); await wait(1500);
-      for (const idea of ideas) { await type(idea); await wait(1400); }
-      await wait(800);
-    }
+  layoutRig(); addEventListener('resize', layoutRig);
+  let angle = 0, vel = 0, target = 0, lastX = null, running = false;
+  function step() {
+    const idle = Math.sin(performance.now() / 2600) * 1.6;
+    vel += -0.018 * (angle - (target + idle)) - 0.06 * vel; angle += vel; target *= 0.985;
+    swing.style.transform = `rotate(${angle.toFixed(3)}deg)`;
+    if (running) requestAnimationFrame(step);
   }
-  if (reduce) { slots.forEach(s => s.classList.add('show')); bubbles.forEach(b => b.classList.add('show')); }
-  else loop();
+  if (!reduce) {
+    addEventListener('pointermove', e => { if (lastX !== null) target = Math.max(-14, Math.min(14, target + (e.clientX - lastX) * .09)); lastX = e.clientX; }, { passive: true });
+    new IntersectionObserver(([e]) => { if (e.isIntersecting && !running) { running = true; requestAnimationFrame(step); } if (!e.isIntersecting) running = false; }).observe($('#meta'));
+  }
 
-  // Store journey ticks itself off when it comes into view
-  const items = [...document.querySelectorAll('#journey .li')];
-  let started = false;
-  new IntersectionObserver(async entries => {
-    if (started || !entries.some(e => e.isIntersecting)) return;
-    started = true;
-    for (let i = 0; i < items.length; i++) {
-      items.forEach((li, j) => { li.classList.toggle('done', j < i); li.classList.toggle('now', j === i); });
-      items.slice(0, i).forEach(li => li.querySelector('.c').textContent = '✓');
-      await wait(reduce ? 0 : 520);
-    }
-  }, { threshold: .4 }).observe(document.getElementById('journey'));
+  // GitHub sync states cycle while visible (the real states the app shows).
+  const chips = [...document.querySelectorAll('#syncStates span')];
+  let ci = 0, chipTimer;
+  new IntersectionObserver(([e]) => {
+    clearInterval(chipTimer);
+    if (e.isIntersecting && !reduce) chipTimer = setInterval(() => { ci = (ci + 1) % chips.length; chips.forEach((c, i) => c.classList.toggle('on', i === ci)); }, 1600);
+  }).observe($('#syncStates'));
 
-  // GitHub pill cycles its states
-  const pill = [['Saving…', '#B9AAFF'], ['Synced', '#3DDC84'], ['1 change waiting', '#FEBC2E'], ['Saving…', '#B9AAFF'], ['Synced', '#3DDC84']];
-  const text = document.getElementById('syncText'), dot = document.getElementById('syncDot');
-  let k = 0;
-  if (!reduce) setInterval(() => { k = (k + 1) % pill.length; text.textContent = pill[k][0]; dot.style.background = pill[k][1]; }, 1800);
-})();
+  if (!window.gsap || reduce) return;
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Wings open once, then breathe.
+  const wing = s => ({ attr: { transform: `translate(512 615) scale(${s} 1) translate(-512 -615)` } });
+  gsap.timeline({ delay: .5 }).to('#hero-wings', { ...wing(1), duration: 1.4, ease: 'elastic.out(1, .55)' })
+    .to('#hero-wings', { ...wing(.72), duration: 1.6, ease: 'sine.inOut', repeat: -1, yoyo: true, repeatDelay: 1.2 });
+
+  const mm = gsap.matchMedia();
+  mm.add('(min-width: 901px)', () => {
+    // ---- Metamorphosis: the real app grows out of the cocoon ----
+    const app = $('#revealApp'), caps = gsap.utils.toArray('#captions span');
+    const placeOrigin = () => { const p = pod.getBoundingClientRect(), a = app.getBoundingClientRect();
+      gsap.set(app, { '--cx': ((p.left + p.width / 2 - a.left) / a.width * 100) + '%', '--cy': ((p.top + p.height * .62 - a.top) / a.height * 100) + '%' }); };
+    const tl = gsap.timeline({ scrollTrigger: { trigger: '#meta', start: 'top top', end: '+=220%', pin: true, scrub: 1, anticipatePin: 1, invalidateOnRefresh: true, onRefresh: placeOrigin } });
+    placeOrigin();
+    tl.to('#heroCopy', { y: -80, opacity: 0, duration: .25, ease: 'power2.in' }, 0)
+      .to('#rigMove', { x: () => -(rig.getBoundingClientRect().left - innerWidth / 2), duration: .3, ease: 'power2.inOut' }, 0)
+      .to('#pod', { scale: 1.35, duration: .3, ease: 'power2.inOut' }, 0)
+      .to(app, { '--r': '75%', duration: .4, ease: 'power2.in' }, .28)
+      .to('#rigMove', { opacity: 0, scale: 1.5, duration: .22, ease: 'power1.in' }, .32)
+      .to(app, { '--r': '160%', duration: .2, ease: 'none' }, .68)
+      .to(app, { scale: .96, duration: .2, ease: 'power1.inOut' }, .7);
+    caps.forEach((c, i) => { const t = .72 + i * .09; tl.fromTo(c, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: .04 }, t); if (i < caps.length - 1) tl.to(c, { opacity: 0, y: -16, duration: .04 }, t + .07); });
+    tl.to({}, { duration: .05 });
+
+    // ---- Guided: the four real wizard screens stack as you scroll; the list follows ----
+    const shots = gsap.utils.toArray('#stack img'), items = gsap.utils.toArray('#stepsList li');
+    gsap.set(shots.slice(1), { yPercent: 110, opacity: 1 });
+    const g = gsap.timeline({ scrollTrigger: { trigger: '#guidedPin', start: 'top top', end: '+=' + (shots.length - 1) * 70 + '%', pin: true, scrub: 1, anticipatePin: 1,
+      onUpdate: self => { const k = Math.min(items.length - 1, Math.round(self.progress * (items.length - 1))); items.forEach((li, i) => li.classList.toggle('on', i === k)); } } });
+    shots.slice(1).forEach((s, i) => {
+      g.to(s, { yPercent: 0, duration: 1, ease: 'power2.inOut' }, i)
+       .to(shots[i], { scale: .92, y: -24, filter: 'brightness(.55)', duration: 1, ease: 'power2.inOut' }, i);
+    });
+
+    // ---- Publishing: vertical scroll pans the four steps sideways ----
+    const track = $('#track'), pan = $('#pan');
+    const distance = () => Math.max(0, track.scrollWidth - pan.clientWidth);
+    gsap.to(track, { x: () => -distance(), ease: 'none', scrollTrigger: { trigger: pan, start: 'top top', end: () => '+=' + distance(), pin: true, scrub: 1, anticipatePin: 1, invalidateOnRefresh: true } });
+  });
+
+  // ---- Architecture: settles from a close-up into the whole map ----
+  gsap.fromTo('#archImg', { scale: 1.35, yPercent: 6 }, { scale: 1, yPercent: 0, ease: 'none', scrollTrigger: { trigger: '#archImg', start: 'top bottom', end: 'center center', scrub: true } });
+
+  // ---- Stacks marquee: drifts, and scrolling pushes it along ----
+  const row = $('#marquee'); row.innerHTML += row.innerHTML;
+  const loop = gsap.to(row, { xPercent: -50, ease: 'none', duration: 45, repeat: -1 });
+  ScrollTrigger.create({ trigger: '.marquee', start: 'top bottom', end: 'bottom top',
+    onUpdate: self => gsap.to(loop, { timeScale: self.direction * Math.min(4, 1 + Math.abs(self.getVelocity()) / 400), duration: .3, overwrite: true, onComplete: () => gsap.to(loop, { timeScale: self.direction, duration: 1 }) }) });
+
+  // ---- Finale: the butterfly leaves the cocoon ----
+  gsap.timeline({ scrollTrigger: { trigger: '#emerge', start: 'top 75%' } })
+    .set('#fly', { opacity: 1, scale: .35 })
+    .to('#final-wings', { attr: { transform: 'translate(512 615) scale(0.02 1) translate(-512 -615)' }, duration: .5, ease: 'power2.in' })
+    .to('#fly', { y: -150, scale: 1, duration: 2.2, ease: 'power2.out' }, '<.25')
+    .to('#fly', { opacity: 0, y: -260, x: 60, duration: 1.2, ease: 'power1.in' }, '-=0.5')
+    .to('#final-wings', { attr: { transform: 'translate(512 615) scale(1 1) translate(-512 -615)' }, duration: 1, ease: 'elastic.out(1, .5)' }, '-=0.6');
+  gsap.to(['#fly-r', '#fly-l'], { scaleX: .35, transformOrigin: '512px 615px', duration: .16, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+});
 </script>
 </body>
 </html>
