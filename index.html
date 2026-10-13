@@ -82,8 +82,7 @@ body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-in
 .btn:active { transform: translateY(1px) scale(.98); }
 .btn-primary { background: var(--accent); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 10px 30px -10px rgba(91,61,240,.7); }
 .btn-primary:hover { background: var(--accent-deep); }
-.btn-primary .ph { font-size: 18px; transition: transform .4s var(--ease); }
-.btn-primary:hover .ph { transform: translateX(3px); }
+.btn-primary .ph { font-size: 18px; }
 .btn-quiet { border-color: var(--line-2); }
 .btn-quiet:hover { background: var(--bg-2); }
 .beta { display: inline-flex; align-items: center; height: 22px; padding: 0 9px; border-radius: 999px; font: 700 11px/1 "Geist Mono", monospace; letter-spacing: .1em; color: var(--accent-text); background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent); }
@@ -162,7 +161,7 @@ body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-in
 .cell.android { grid-column: span 3; }
 .cell.web { grid-column: span 3; }
 .cell.ask { grid-column: span 4; }
-.cell.ask img { border-radius: 12px; border: 1px solid var(--line); margin-bottom: 34px; max-width: 560px; }
+.cell.ask img { width: 100%; height: auto; border-radius: 14px; border: 1px solid var(--line); margin-bottom: 34px; box-shadow: 0 24px 60px -24px rgba(8,4,26,.7); }
 .cell.mac { grid-column: span 2; background: linear-gradient(160deg, var(--accent-deep), #29177A); border-color: transparent; color: #fff; }
 .cell.mac p { color: rgba(255,255,255,.8); }
 .phone-ghost { margin: 6px 0 40px; display: flex; gap: 18px; }
@@ -243,6 +242,7 @@ details p { margin: 0 0 26px; color: var(--fg-2); font-size: 17px; max-width: 60
 .finale { position: relative; padding: 110px 0 160px; text-align: center; overflow: hidden; }
 .finale h2 { max-width: 15ch; margin: 0 auto; }
 .finale p { color: var(--fg-2); font-size: 19px; margin: 24px auto 40px; max-width: 42ch; }
+.finale .dl-meta { font-size: 14px; color: var(--fg-3); margin: 18px auto 0; }
 .emerge { position: relative; width: 120px; height: 260px; margin: 0 auto 40px; }
 .emerge .shell { position: absolute; inset: 0; color: var(--accent); }
 .emerge .fly { position: absolute; left: 50%; top: 58%; width: 120px; transform: translate(-50%, -50%); opacity: 0; color: var(--accent-text); }
@@ -337,7 +337,7 @@ footer .legal { width: 100%; font-size: 12.5px; opacity: .85; }
       <a href="#github">GitHub</a>
       <a href="#faq">FAQ</a>
     </div>
-    <a class="btn btn-primary" href="#join">Join the beta</a>
+    <a class="btn btn-primary" href="https://github.com/cocoon-app/releases/releases/latest/download/Cocoon.dmg"><i class="ph ph-apple-logo" aria-hidden="true"></i>Download for Mac</a>
   </div>
 </nav>
 
@@ -353,7 +353,7 @@ footer .legal { width: 100%; font-size: 12.5px; opacity: .85; }
         </h1>
         <p>Build real websites and native iPhone and Android apps by describing them. No coding, no setup, all on your Mac.</p>
         <div class="hero-ctas">
-          <a class="btn btn-primary" href="#join">Join the beta <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
+          <a class="btn btn-primary" href="https://github.com/cocoon-app/releases/releases/latest/download/Cocoon.dmg"><i class="ph ph-apple-logo" aria-hidden="true"></i>Download for Mac</a>
           <a class="btn btn-quiet" href="#guided">See how it works</a>
         </div>
       </div>
@@ -452,7 +452,7 @@ footer .legal { width: 100%; font-size: 12.5px; opacity: .85; }
           <p>Shops, bookings and dashboards that store data, previewed live as Cocoon builds them.</p>
         </article>
         <article class="cell ask fade-up">
-          <img src="assets/screens/chat-composer.jpg" width="900" height="237" loading="lazy" alt="Cocoon's chat box with suggestions: Run my app, Make it look great, Add a login page, Add dark mode.">
+          <img src="assets/screens/chat-composer.png" width="1720" height="228" loading="lazy" alt="Cocoon's chat box with suggestions: Run my app, Make it look great, Add a login page, Add dark mode.">
           <h3>Change anything by asking</h3>
           <p>“Make the header blue.” “Add a login page.” Every change shows up in seconds, and every version is saved so you can always go back.</p>
         </article>
@@ -583,6 +583,7 @@ footer .legal { width: 100%; font-size: 12.5px; opacity: .85; }
         <details><summary>Can a developer take over my app later?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>Yes. Cocoon writes a normal codebase on standard tools, with documentation and a full history on GitHub. Any developer can pick it up.</p></details>
         <details><summary>What does it cost to run?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>You pay the AI you connect as you go; OpenRouter can start free. Publishing a website can be free. Apple charges $99 a year and Google Play $25 once, only if you ship to their stores.</p></details>
         <details><summary>Who owns what I build?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>You do. The code is on your Mac and in your own GitHub, published under your own accounts. If you stop using Cocoon, everything keeps working.</p></details>
+        <details><summary>How do I install it?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>Download Cocoon, open the file and drag Cocoon into Applications. That's it. From then on Cocoon updates itself, and each update is checked by Apple before it installs.</p></details>
         <details><summary>What does beta mean?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>Cocoon works today and is improving every week. Some things will change, and your feedback decides what comes next.</p></details>
         <details><summary>What do I need?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>A Mac with Apple silicon running macOS 26. Cocoon downloads everything else during a one-time setup, and shows you the progress.</p></details>
       </div>
@@ -597,8 +598,9 @@ footer .legal { width: 100%; font-size: 12.5px; opacity: .85; }
         <svg class="fly" id="fly" viewBox="330 420 364 400"><g fill="currentColor" transform="translate(512 652) scale(.8) translate(-512 -615)"><g id="fly-r"><use href="#wing-r"/></g><g id="fly-l"><use href="#wing-r" transform="translate(1024 0) scale(-1 1)"/></g></g></svg>
       </div>
       <h2 class="fade-up">Your idea is ready to fly.</h2>
-      <p class="fade-up">Cocoon is in beta for Mac. Join now, build your first app this week, and help shape what comes next.</p>
-      <div class="fade-up"><a class="btn btn-primary" href="https://github.com/cocoon-app">Join the beta <i class="ph ph-arrow-right" aria-hidden="true"></i></a></div>
+      <p class="fade-up">Cocoon is in beta for Mac. Download it, build your first app this week, and help shape what comes next.</p>
+      <div class="fade-up"><a class="btn btn-primary" href="https://github.com/cocoon-app/releases/releases/latest/download/Cocoon.dmg"><i class="ph ph-apple-logo" aria-hidden="true"></i>Download for Mac</a></div>
+      <p class="dl-meta fade-up" id="dlMeta">Free beta for Macs with Apple silicon, macOS 26 or later.</p>
     </div>
   </section>
 </main>
@@ -644,6 +646,14 @@ window.addEventListener('DOMContentLoaded', () => {
     addEventListener('pointermove', e => { if (lastX !== null) target = Math.max(-14, Math.min(14, target + (e.clientX - lastX) * .09)); lastX = e.clientX; }, { passive: true });
     new IntersectionObserver(([e]) => { if (e.isIntersecting && !running) { running = true; requestAnimationFrame(step); } if (!e.isIntersecting) running = false; }).observe($('#meta'));
   }
+
+  // The download line shows the newest release (falls back to the static text).
+  fetch('https://api.github.com/repos/cocoon-app/releases/releases/latest').then(r => r.ok ? r.json() : null).then(r => {
+    if (!r) return;
+    const dmg = (r.assets || []).find(a => a.name === 'Cocoon.dmg');
+    const mb = dmg ? ` · ${Math.round(dmg.size / 1048576)} MB` : '';
+    $('#dlMeta').textContent = `Version ${String(r.tag_name).replace(/^v/, '')} beta${mb}, for Macs with Apple silicon and macOS 26`;
+  }).catch(() => {});
 
   // GitHub sync states cycle while visible (the real states the app shows).
   const chips = [...document.querySelectorAll('#syncStates span')];
