@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy · Cocoon</title>
+<meta name="description" content="What Cocoon does with your data: it stays on your Mac and goes only to the services you connect.">
+<meta name="color-scheme" content="dark light">
+<link rel="icon" type="image/png" href="assets/favicon-64.png">
+<style>
+@font-face { font-family: "Geist"; font-weight: 300 900; font-display: swap; src: url(assets/fonts/geist-latin.woff2) format("woff2"); }
+:root { --bg: #0E0E12; --fg: #F2F0F7; --fg-2: #ABA8BA; --line: rgba(242,240,247,.1); --accent: #A794FF; }
+@media (prefers-color-scheme: light) { :root { --bg: #F6F3EE; --fg: #121019; --fg-2: #4E4A5C; --line: rgba(18,16,25,.1); --accent: #4A2BD9; } }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 400 17px/1.65 "Geist", -apple-system, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+main { max-width: 720px; margin: 0 auto; padding: 48px 24px 96px; }
+a { color: var(--accent); }
+.back { display: inline-flex; gap: 8px; align-items: center; color: var(--fg); text-decoration: none; font-weight: 800; letter-spacing: -.05em; font-size: 22px; margin-bottom: 56px; }
+.back svg { width: 12px; height: 26px; color: #7457FF; }
+h1 { font-size: clamp(36px, 6vw, 56px); letter-spacing: -.05em; line-height: 1.05; margin: 0 0 10px; }
+.updated { color: var(--fg-2); margin: 0 0 40px; }
+h2 { font-size: 22px; letter-spacing: -.02em; margin: 44px 0 10px; }
+p, li { color: var(--fg-2); }
+strong { color: var(--fg); }
+ul { padding-left: 20px; }
+li { margin: 6px 0; }
+footer { border-top: 1px solid var(--line); margin-top: 64px; padding-top: 24px; font-size: 14px; color: var(--fg-2); }
+</style>
+</head>
+<body>
+<main>
+<a class="back" href="./"><svg viewBox="320 60 384 840" aria-hidden="true"><path d="M512 86 L512 262" stroke="currentColor" stroke-width="30" stroke-linecap="round"/><path d="M512 246 C 566 330 690 440 690 616 C 690 788 610 886 512 886 C 414 886 334 788 334 616 C 334 440 458 330 512 246 Z" fill="currentColor"/></svg>cocoon</a>
+<h1>Privacy</h1>
+<p class="updated">Updated 17 October 2026 · Cocoon is in beta</p>
+
+<p><strong>Short version:</strong> Cocoon runs on your Mac. We don't run servers that receive your ideas, your apps or your keys, and we don't track how you use Cocoon. Your data goes only to the services <em>you</em> choose to connect.</p>
+
+<h2>What stays on your Mac</h2>
+<ul>
+<li>Your projects, their code, chats and settings, in your user folder.</li>
+<li>Your keys and sign-ins (AI providers, GitHub, publishing accounts), in your Mac's Keychain.</li>
+<li>Crash and diagnostic notes, which are saved locally and never uploaded.</li>
+</ul>
+
+<h2>What goes to services you connect</h2>
+<p>Cocoon talks to these only after you connect them, using your own account. Their privacy policies apply to what they receive.</p>
+<ul>
+<li><strong>The AI you choose</strong> (OpenRouter, Anthropic's Claude or OpenAI) receives your requests and the parts of your project it needs to build your app.</li>
+<li><strong>GitHub</strong> receives your app's code when you keep a copy there. Passwords and keys (<code>.env</code> files, signing keys) are never uploaded.</li>
+<li><strong>Where you publish</strong> (Vercel, Fly.io, Neon, Cloudflare, Apple's App Store Connect, Google Play) receives your app and the details needed to publish it.</li>
+</ul>
+
+<h2>What we see</h2>
+<ul>
+<li><strong>No analytics, no tracking, no account with us.</strong></li>
+<li>To check for updates, Cocoon asks GitHub for the newest version twice a day. GitHub sees that request like any website visit. You can turn this off in Settings › General › Updates.</li>
+<li>If you send feedback, it is posted on GitHub Issues, which is public. Don't include anything private.</li>
+</ul>
+
+<h2>This website</h2>
+<p>Hosted by GitHub Pages. It sets no cookies and uses no analytics. It loads its animation and icon libraries from public CDNs (cdnjs and unpkg), and asks GitHub which version is newest. Downloads come from GitHub.</p>
+
+<h2>Removing your data</h2>
+<p>Delete Cocoon from Applications, then the <strong>Cocoon</strong> folder in your Library's Application Support (in Finder: Go › Go to Folder…, then type <code>~/Library/Application Support/Cocoon</code>). Data held by services you connected stays in those accounts until you delete it there.</p>
+
+<h2>Changes</h2>
+<p>If this policy changes, the new version will be on this page with a new date.</p>
+
+<p>Cocoon is made by Vitor Hugo Aguila Oliveira.</p>
+<footer>Questions? <a href="https://github.com/cocoon-app/releases/issues/new?template=problem.yml">Ask us on GitHub</a>. See also the <a href="terms.html">beta terms</a>.</footer>
+</main>
+</body>
+</html>

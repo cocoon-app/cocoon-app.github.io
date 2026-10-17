@@ -10,7 +10,14 @@
 <meta name="theme-color" content="#F6F3EE" media="(prefers-color-scheme: light)">
 <meta property="og:title" content="Cocoon (beta): your idea goes in, an app comes out">
 <meta property="og:description" content="Build real websites and native iPhone and Android apps by describing them. No coding, no setup, all on your Mac.">
-<meta property="og:image" content="https://cocoon-app.github.io/assets/screens/home.jpg">
+<meta property="og:image" content="https://cocoon-app.github.io/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://cocoon-app.github.io/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Cocoon (beta): your idea goes in, an app comes out">
+<meta name="twitter:description" content="Build real websites and native iPhone and Android apps by describing them. No coding, no setup, all on your Mac.">
+<meta name="twitter:image" content="https://cocoon-app.github.io/assets/og.jpg">
 <meta property="og:type" content="website">
 <link rel="icon" type="image/png" href="assets/favicon-64.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
@@ -237,6 +244,7 @@ summary::-webkit-details-marker { display: none; }
 summary i.ph { transition: transform .5s var(--ease); color: var(--accent-text); flex: none; }
 details[open] summary i.ph { transform: rotate(45deg); }
 details p { margin: 0 0 26px; color: var(--fg-2); font-size: 17px; max-width: 60ch; }
+details p a { color: var(--accent-text); }
 
 /* 11. Finale */
 .finale { position: relative; padding: 110px 0 160px; text-align: center; overflow: hidden; }
@@ -585,6 +593,8 @@ footer .legal { width: 100%; font-size: 12.5px; opacity: .85; }
         <details><summary>Who owns what I build?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>You do. The code is on your Mac and in your own GitHub, published under your own accounts. If you stop using Cocoon, everything keeps working.</p></details>
         <details><summary>How do I install it?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>Download Cocoon, open the file and drag Cocoon into Applications. That's it. From then on Cocoon updates itself, and each update is checked by Apple before it installs.</p></details>
         <details><summary>What does beta mean?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>Cocoon works today and is improving every week. Some things will change, and your feedback decides what comes next.</p></details>
+        <details><summary>How do I send feedback or report a problem?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>In Cocoon, choose Help › Send Feedback. It opens a short form with your version already filled in. You can also <a href="https://github.com/cocoon-app/releases/issues/new?template=problem.yml">report a problem</a> or <a href="https://github.com/cocoon-app/releases/issues/new?template=idea.yml">share an idea</a> here. Feedback is public on GitHub, so leave out anything private.</p></details>
+        <details><summary>How do I uninstall it?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>Drag Cocoon from Applications to the Trash. To also remove your apps and settings, open Finder, choose Go › Go to Folder… and delete the Cocoon folder in <code>~/Library/Application Support</code>. Copies on GitHub and published apps stay in those accounts.</p></details>
         <details><summary>What do I need?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>A Mac with Apple silicon running macOS 26. Cocoon downloads everything else during a one-time setup, and shows you the progress.</p></details>
       </div>
     </div>
@@ -609,7 +619,7 @@ footer .legal { width: 100%; font-size: 12.5px; opacity: .85; }
   <div class="wrap">
     <a class="brand" href="#top"><svg viewBox="320 60 384 840" aria-hidden="true"><path d="M512 86 L512 262" stroke="currentColor" stroke-width="30" stroke-linecap="round"/><use href="#pod-body" fill="currentColor" mask="url(#m-static)"/></svg>cocoon<span class="beta">BETA</span></a>
     <span>© 2026 Cocoon</span>
-    <nav aria-label="Footer"><a href="#guided">How it works</a><a href="#faq">FAQ</a><a href="https://github.com/cocoon-app">GitHub</a></nav>
+    <nav aria-label="Footer"><a href="#faq">FAQ</a><a href="https://github.com/cocoon-app/releases/issues/new/choose">Feedback</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></nav>
     <p class="legal">Apple, App Store, iPhone, Swift and Xcode are trademarks of Apple Inc. Android, Google Play, Kotlin and Jetpack Compose belong to Google LLC and JetBrains. GitHub, Vercel, Fly.io, OpenRouter, Claude, OpenAI and the other names are trademarks of their owners. Logos via Simple Icons.</p>
   </div>
 </footer>
