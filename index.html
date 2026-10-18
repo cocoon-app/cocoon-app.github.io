@@ -345,7 +345,7 @@ footer .legal { width: 100%; font-size: 12.5px; opacity: .85; }
       <a href="#github">GitHub</a>
       <a href="#faq">FAQ</a>
     </div>
-    <a class="btn btn-primary" href="https://github.com/cocoon-app/releases/releases/latest/download/Cocoon.dmg"><i class="ph ph-apple-logo" aria-hidden="true"></i>Download for Mac</a>
+    <a class="btn btn-primary" href="download/Cocoon.dmg" download><i class="ph ph-apple-logo" aria-hidden="true"></i>Download for Mac</a>
   </div>
 </nav>
 
@@ -361,7 +361,7 @@ footer .legal { width: 100%; font-size: 12.5px; opacity: .85; }
         </h1>
         <p>Build real websites and native iPhone and Android apps by describing them. No coding, no setup, all on your Mac.</p>
         <div class="hero-ctas">
-          <a class="btn btn-primary" href="https://github.com/cocoon-app/releases/releases/latest/download/Cocoon.dmg"><i class="ph ph-apple-logo" aria-hidden="true"></i>Download for Mac</a>
+          <a class="btn btn-primary" href="download/Cocoon.dmg" download><i class="ph ph-apple-logo" aria-hidden="true"></i>Download for Mac</a>
           <a class="btn btn-quiet" href="#guided">See how it works</a>
         </div>
       </div>
@@ -609,7 +609,7 @@ footer .legal { width: 100%; font-size: 12.5px; opacity: .85; }
       </div>
       <h2 class="fade-up">Your idea is ready to fly.</h2>
       <p class="fade-up">Cocoon is in beta for Mac. Download it, build your first app this week, and help shape what comes next.</p>
-      <div class="fade-up"><a class="btn btn-primary" href="https://github.com/cocoon-app/releases/releases/latest/download/Cocoon.dmg"><i class="ph ph-apple-logo" aria-hidden="true"></i>Download for Mac</a></div>
+      <div class="fade-up"><a class="btn btn-primary" href="download/Cocoon.dmg" download><i class="ph ph-apple-logo" aria-hidden="true"></i>Download for Mac</a></div>
       <p class="dl-meta fade-up" id="dlMeta">Free beta for Macs with Apple silicon, macOS 26 or later.</p>
     </div>
   </section>
@@ -658,11 +658,9 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   // The download line shows the newest release (falls back to the static text).
-  fetch('https://api.github.com/repos/cocoon-app/releases/releases/latest').then(r => r.ok ? r.json() : null).then(r => {
+  fetch('download/latest.json', { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(r => {
     if (!r) return;
-    const dmg = (r.assets || []).find(a => a.name === 'Cocoon.dmg');
-    const mb = dmg ? ` · ${Math.round(dmg.size / 1048576)} MB` : '';
-    $('#dlMeta').textContent = `Version ${String(r.tag_name).replace(/^v/, '')} beta${mb}, for Macs with Apple silicon and macOS 26`;
+    $('#dlMeta').textContent = `Version ${r.version} beta · ${Math.round(r.size / 1048576)} MB, for Macs with Apple silicon and macOS 26`;
   }).catch(() => {});
 
   // GitHub sync states cycle while visible (the real states the app shows).

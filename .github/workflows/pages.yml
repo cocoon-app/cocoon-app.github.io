@@ -1,0 +1,71 @@
+name: Website
+
+# Deploys the site with the newest Cocoon.dmg next to it, so the Download button downloads straight
+# from cocoon-app.github.io (always the latest release). The DMG is fetched at deploy time from the
+# public cocoon-app/releases repo and never committed here.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  repository_dispatch:
+    types: [release]
+  schedule:
+    - cron: "*/15 * * * *"   # picks up a new release within 15 minutes
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Newest release
+        id: latest
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG=$(gh release view -R cocoon-app/releases --json tagName --jq .tagName)
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          LIVE=$(curl -fsS https://cocoon-app.github.io/download/latest.json 2>/dev/null | jq -r .tag 2>/dev/null || echo none)
+          echo "live=$LIVE" >> "$GITHUB_OUTPUT"
+          echo "Newest release: $TAG, live on the site: $LIVE"
+
+      # Scheduled runs only deploy when there's a new release; pushes and manual runs always do.
+      - name: Up to date
+        if: github.event_name == 'schedule' && steps.latest.outputs.tag == steps.latest.outputs.live
+        run: echo "The site already serves ${{ steps.latest.outputs.tag }}."
+
+      - uses: actions/checkout@v4
+        if: github.event_name != 'schedule' || steps.latest.outputs.tag != steps.latest.outputs.live
+
+      - name: Site + newest DMG
+        if: github.event_name != 'schedule' || steps.latest.outputs.tag != steps.latest.outputs.live
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.latest.outputs.tag }}
+        run: |
+          mkdir -p _site/download
+          rsync -a --exclude .git --exclude .github --exclude _site ./ _site/
+          gh release download "$TAG" -R cocoon-app/releases --pattern Cocoon.dmg --dir _site/download --clobber
+          SIZE=$(stat -c %s _site/download/Cocoon.dmg)
+          SHA=$(sha256sum _site/download/Cocoon.dmg | cut -d' ' -f1)
+          printf '{"tag":"%s","version":"%s","size":%s,"sha256":"%s"}\n' "$TAG" "${TAG#v}" "$SIZE" "$SHA" > _site/download/latest.json
+          cat _site/download/latest.json
+
+      - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'schedule' || steps.latest.outputs.tag != steps.latest.outputs.live
+        with:
+          path: _site
+
+      - id: deployment
+        if: github.event_name != 'schedule' || steps.latest.outputs.tag != steps.latest.outputs.live
+        uses: actions/deploy-pages@v4
