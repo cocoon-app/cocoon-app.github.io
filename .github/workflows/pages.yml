@@ -1,8 +1,8 @@
 name: Website
 
-# Deploys the site with the newest Cocoon.dmg next to it, so the Download button downloads straight
-# from cocoon-app.github.io (always the latest release). The DMG is fetched at deploy time from the
-# public cocoon-app/releases repo and never committed here.
+# Deploys the site with every Download button pointing at the newest release's exact file
+# (github.com/cocoon-app/releases/releases/download/vX.Y.Z/Cocoon-X.Y.Z.dmg, a direct download).
+# /download/ is a tiny page that starts the newest download, for links that can't carry a version.
 on:
   push:
     branches: [main]
@@ -47,19 +47,25 @@ jobs:
       - uses: actions/checkout@v4
         if: github.event_name != 'schedule' || steps.latest.outputs.tag != steps.latest.outputs.live
 
-      - name: Site + newest DMG
+      - name: Site, pointed at the newest release
         if: github.event_name != 'schedule' || steps.latest.outputs.tag != steps.latest.outputs.live
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.latest.outputs.tag }}
         run: |
-          mkdir -p _site/download
+          mkdir -p _site
           rsync -a --exclude .git --exclude .github --exclude _site ./ _site/
-          gh release download "$TAG" -R cocoon-app/releases --pattern Cocoon.dmg --dir _site/download --clobber
-          SIZE=$(stat -c %s _site/download/Cocoon.dmg)
-          SHA=$(sha256sum _site/download/Cocoon.dmg | cut -d' ' -f1)
-          printf '{"tag":"%s","version":"%s","size":%s,"sha256":"%s"}\n' "$TAG" "${TAG#v}" "$SIZE" "$SHA" > _site/download/latest.json
+          VERSION="${TAG#v}"
+          ASSET="Cocoon-${VERSION}.dmg"
+          SIZE=$(gh release view "$TAG" -R cocoon-app/releases --json assets --jq ".assets[] | select(.name==\"$ASSET\") | .size")
+          [ -n "$SIZE" ] || { echo "No $ASSET in $TAG"; exit 1; }
+          URL="https://github.com/cocoon-app/releases/releases/download/${TAG}/${ASSET}"
+          NOTES="https://github.com/cocoon-app/releases/releases/tag/${TAG}"
+          # Every Download button gets the exact file of the newest version (a direct download).
+          sed -i "s#href=\"download/Cocoon.dmg\"#href=\"${URL}\"#g" _site/index.html _site/download/index.html
+          printf '{"tag":"%s","version":"%s","size":%s,"url":"%s","notes":"%s"}\n' "$TAG" "$VERSION" "$SIZE" "$URL" "$NOTES" > _site/download/latest.json
           cat _site/download/latest.json
+          grep -c "$URL" _site/index.html
 
       - uses: actions/upload-pages-artifact@v3
         if: github.event_name != 'schedule' || steps.latest.outputs.tag != steps.latest.outputs.live

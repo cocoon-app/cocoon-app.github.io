@@ -251,6 +251,7 @@ details p a { color: var(--accent-text); }
 .finale h2 { max-width: 15ch; margin: 0 auto; }
 .finale p { color: var(--fg-2); font-size: 19px; margin: 24px auto 40px; max-width: 42ch; }
 .finale .dl-meta { font-size: 14px; color: var(--fg-3); margin: 18px auto 0; }
+.finale .dl-meta a { color: var(--accent-text); }
 .emerge { position: relative; width: 120px; height: 260px; margin: 0 auto 40px; }
 .emerge .shell { position: absolute; inset: 0; color: var(--accent); }
 .emerge .fly { position: absolute; left: 50%; top: 58%; width: 120px; transform: translate(-50%, -50%); opacity: 0; color: var(--accent-text); }
@@ -345,7 +346,7 @@ footer .legal { width: 100%; font-size: 12.5px; opacity: .85; }
       <a href="#github">GitHub</a>
       <a href="#faq">FAQ</a>
     </div>
-    <a class="btn btn-primary" href="download/Cocoon.dmg" download><i class="ph ph-apple-logo" aria-hidden="true"></i>Download for Mac</a>
+    <a class="btn btn-primary" href="download/Cocoon.dmg" data-download><i class="ph ph-apple-logo" aria-hidden="true"></i>Download for Mac</a>
   </div>
 </nav>
 
@@ -361,7 +362,7 @@ footer .legal { width: 100%; font-size: 12.5px; opacity: .85; }
         </h1>
         <p>Build real websites and native iPhone and Android apps by describing them. No coding, no setup, all on your Mac.</p>
         <div class="hero-ctas">
-          <a class="btn btn-primary" href="download/Cocoon.dmg" download><i class="ph ph-apple-logo" aria-hidden="true"></i>Download for Mac</a>
+          <a class="btn btn-primary" href="download/Cocoon.dmg" data-download><i class="ph ph-apple-logo" aria-hidden="true"></i>Download for Mac</a>
           <a class="btn btn-quiet" href="#guided">See how it works</a>
         </div>
       </div>
@@ -609,7 +610,7 @@ footer .legal { width: 100%; font-size: 12.5px; opacity: .85; }
       </div>
       <h2 class="fade-up">Your idea is ready to fly.</h2>
       <p class="fade-up">Cocoon is in beta for Mac. Download it, build your first app this week, and help shape what comes next.</p>
-      <div class="fade-up"><a class="btn btn-primary" href="download/Cocoon.dmg" download><i class="ph ph-apple-logo" aria-hidden="true"></i>Download for Mac</a></div>
+      <div class="fade-up"><a class="btn btn-primary" href="download/Cocoon.dmg" data-download><i class="ph ph-apple-logo" aria-hidden="true"></i>Download for Mac</a></div>
       <p class="dl-meta fade-up" id="dlMeta">Free beta for Macs with Apple silicon, macOS 26 or later.</p>
     </div>
   </section>
@@ -658,9 +659,15 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   // The download line shows the newest release (falls back to the static text).
+  // The deploy writes the newest version's file into every button; this keeps them right even if
+  // the page is older than the latest release, and adds the version line with its release notes.
   fetch('download/latest.json', { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(r => {
     if (!r) return;
-    $('#dlMeta').textContent = `Version ${r.version} beta · ${Math.round(r.size / 1048576)} MB, for Macs with Apple silicon and macOS 26`;
+    document.querySelectorAll('a[data-download]').forEach(a => { a.href = r.url; });
+    const meta = $('#dlMeta');
+    meta.textContent = `Version ${r.version} beta · ${Math.round(r.size / 1048576)} MB, for Macs with Apple silicon and macOS 26. `;
+    const notes = Object.assign(document.createElement('a'), { href: r.notes, textContent: 'Release notes' });
+    meta.append(notes);
   }).catch(() => {});
 
   // GitHub sync states cycle while visible (the real states the app shows).
