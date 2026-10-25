@@ -256,6 +256,19 @@ details p a { color: var(--accent-text); }
 .emerge .shell { position: absolute; inset: 0; color: var(--accent); }
 .emerge .fly { position: absolute; left: 50%; top: 58%; width: 120px; transform: translate(-50%, -50%); opacity: 0; color: var(--accent-text); }
 
+/* Maker */
+.maker { padding: 0 0 70px; }
+.maker-card { display: grid; grid-template-columns: auto 1fr auto; gap: 28px; align-items: center; padding: 30px 34px; border-radius: var(--r-surface); border: 1px solid var(--line); background: var(--bg-2); }
+.maker img { width: 76px; height: 76px; border-radius: 50%; border: 2px solid color-mix(in srgb, var(--accent) 55%, transparent); }
+.maker .who { font-size: 13px; font-weight: 600; letter-spacing: .02em; color: var(--fg-3); margin: 0 0 4px; }
+.maker h3 { margin: 0 0 6px; font-size: 24px; letter-spacing: -.035em; }
+.maker p { margin: 0; color: var(--fg-2); font-size: 15.5px; max-width: 60ch; }
+.maker .links { display: flex; gap: 10px; flex-wrap: wrap; }
+.maker .links a { display: inline-flex; align-items: center; gap: 8px; height: 42px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line-2); font-weight: 600; font-size: 14.5px; transition: background-color .3s var(--ease); }
+.maker .links a:hover { background: var(--bg-3); }
+.maker .links .logo { --s: 17px; background: var(--fg); }
+.maker .links .ph { font-size: 18px; }
+@media (max-width: 900px) { .maker-card { grid-template-columns: 1fr; text-align: left; padding: 26px 22px; } }
 footer { border-top: 1px solid var(--line); padding: 34px 0 46px; color: var(--fg-3); font-size: 14px; }
 footer .wrap { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
 footer .brand { font-size: 19px; color: var(--fg); }
@@ -616,10 +629,27 @@ footer .legal { width: 100%; font-size: 12.5px; opacity: .85; }
   </section>
 </main>
 
+<section class="maker" aria-label="Who builds Cocoon">
+  <div class="wrap">
+    <div class="maker-card fade-up">
+      <img src="https://github.com/vitoraguila.png?size=160" width="76" height="76" alt="Vitor Águila" loading="lazy">
+      <div>
+        <p class="who">The engineer behind Cocoon</p>
+        <h3>Vitor Águila</h3>
+        <p>Software engineer, endlessly curious. 12+ years designing reliable systems and bringing AI into real products. Cocoon is designed and built by Vitor, so anyone with an idea can turn it into a real app.</p>
+      </div>
+      <div class="links">
+        <a href="https://vitoraguila.com" rel="me"><i class="ph ph-globe-simple" aria-hidden="true"></i>vitoraguila.com</a>
+        <a href="https://github.com/vitoraguila" rel="me"><span class="logo l-github" aria-hidden="true"></span>GitHub</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <footer>
   <div class="wrap">
     <a class="brand" href="#top"><svg viewBox="320 60 384 840" aria-hidden="true"><path d="M512 86 L512 262" stroke="currentColor" stroke-width="30" stroke-linecap="round"/><use href="#pod-body" fill="currentColor" mask="url(#m-static)"/></svg>cocoon<span class="beta">BETA</span></a>
-    <span>© 2026 Cocoon</span>
+    <span>© 2026 Cocoon · Made by <a href="https://vitoraguila.com">Vitor Águila</a></span>
     <nav aria-label="Footer"><a href="#faq">FAQ</a><a href="https://github.com/cocoon-app/releases/issues/new/choose">Feedback</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></nav>
     <p class="legal">Apple, App Store, iPhone, Swift and Xcode are trademarks of Apple Inc. Android, Google Play, Kotlin and Jetpack Compose belong to Google LLC and JetBrains. GitHub, Vercel, Fly.io, OpenRouter, Claude, OpenAI and the other names are trademarks of their owners. Logos via Simple Icons.</p>
   </div>
